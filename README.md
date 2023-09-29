@@ -1,34 +1,4 @@
-<!-- DELETE THIS SECTION AFTER USING TEMPLATE -->
-
-## About this repository
-
-This is a template repository meant to act as a starting point for new NextJS projects. This template will help us to standardize our development process and make it easier to onboard new developers.
-
-<!-- DELETE THIS SECTION AFTER USING TEMPLATE -->
-
-### What's Included
-
-- React/NextJS
-- MongoDB/Mongoose
-  - `utils/db-connect.ts` contains connection caching functionality for accessing MongoDB.
-- Material UI
-- Zod
-- Jest
-- ESLint
-- Prettier
-- VS Code
-  - Recommended extensions
-    - [ESLint](https://marketplace.visualstudio.com/items?itemName=dbaeumer.vscode-eslint)
-    - [GitLens](https://marketplace.visualstudio.com/items?itemName=eamodio.gitlens)
-    - [Prettier](https://marketplace.visualstudio.com/items?itemName=esbenp.prettier-vscode)
-    - [Jest](https://marketplace.visualstudio.com/items?itemName=Orta.vscode-jest)
-    - [Jest Runner](https://marketplace.visualstudio.com/items?itemName=firsttris.vscode-jest-runner)
-    - [Pretty TS Errors](https://marketplace.visualstudio.com/items?itemName=yoavbls.pretty-ts-errors)
-- GitHub
-  - [Pull Request template](https://github.com/hack4impact-utk/nextjs-template/blob/main/.github/pull_request_template.md)
-- Pre-commit linting hook
-
-# Project Title
+# United Way Grant Management
 
 ## Overview
 
@@ -49,7 +19,7 @@ Put an overview of the non-profit you are working with and what you are doing fo
 ### 1. Clone the repository
 
 ```bash
-git clone https://github.com/hack4impact-utk/[PROJECT NAME].git
+git clone https://github.com/hack4impact-utk/uw-grant-management.git
 ```
 
 ### 2. Open project in VS Code and accept recommended extensions
