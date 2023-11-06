@@ -1,6 +1,46 @@
 import { Model, Document, Schema, model, models } from 'mongoose';
-import { SixMonthReport } from '@/utils/types/models';
-import { zipCodes, months } from '@/utils/constants';
+import { TwelveMonthReport } from '@/utils/types/models';
+import {
+  zipCodes,
+  months,
+  unitedWayFocusAreas,
+  focusAreaIndicators,
+} from '@/utils/constants';
+
+const IndicatorSchema = new Schema(
+  {
+    category: {
+      type: String,
+      required: true,
+      enum: unitedWayFocusAreas,
+    },
+    number: {
+      type: Number,
+      required: true,
+      enum: [1, 2, 3],
+    },
+    goal: {
+      type: Number,
+      required: true,
+    },
+    indicator: {
+      type: String,
+      required: true,
+      enum: focusAreaIndicators,
+    },
+    clientsServed: {
+      type: Number,
+      required: true,
+    },
+    successfulClientsServed: {
+      type: Number,
+      required: true,
+    },
+  },
+  {
+    _id: false,
+  }
+);
 
 const TimePeriodSchema = new Schema(
   {
@@ -179,7 +219,7 @@ const ClientAgeSchema = new Schema(
   }
 );
 
-const SixMonthReportSchema = new Schema(
+const TwelveMonthReportSchema = new Schema(
   {
     periodStart: TimePeriodSchema,
     periodEnd: TimePeriodSchema,
@@ -188,145 +228,13 @@ const SixMonthReportSchema = new Schema(
       ref: 'NonProfit',
       required: true,
     },
+
     clientsServed: {
       type: Number,
       required: true,
     },
-    jobsCreated: {
-      type: Number,
-      required: true,
-    },
-    partners: {
-      type: Number,
-      required: true,
-    },
 
-    /**************************
-     *          FOOD          *
-     ***************************/
-
-    // Number of individuals provided food assistance
-    foodAssistance: {
-      type: Number,
-      required: true,
-    },
-
-    // Number of individuals with increased food knowledge and skills
-    foodKnowledgeAndSkills: {
-      type: Number,
-      required: true,
-    },
-    // Number of individuals with increased access to health foods
-    accessToHealthFoods: {
-      type: Number,
-      required: true,
-    },
-
-    // Number of regional fargers, growers, or gardeners supported
-    producerSupport: {
-      type: Number,
-      required: true,
-    },
-
-    /**************************
-     *        CLOTHING        *
-     ***************************/
-
-    // Number of individuals provided clothing assistance
-    clothingAssistance: {
-      type: Number,
-      required: true,
-    },
-
-    /**************************
-     *        HYGIENE         *
-     ***************************/
-
-    // Nu,ber of individuals provided hygiene assistance
-    hygieneAssistance: {
-      type: Number,
-      required: true,
-    },
-
-    /**************************
-     *      HEALTH CARE       *
-     ***************************/
-
-    // Number of individuals provided health care assistance
-    healthCareAssistance: {
-      type: Number,
-      required: true,
-    },
-
-    /**************************
-     *     MENTAL HEALTH      *
-     ***************************/
-
-    // Number of people provided mental health assistance
-    mentalHealthAssistance: {
-      type: Number,
-      required: true,
-    },
-
-    /**************************
-     *       CHILD CARE       *
-     ***************************/
-
-    // Number of birth through PreK children provided child care
-    childCareBirthToPreK: {
-      type: Number,
-      required: true,
-    },
-
-    // Total number of child care hours provided for birth through PreK aged children
-    childCareBirthToPreKHours: {
-      type: Number,
-      required: true,
-    },
-
-    // Number of school-aged children provided child care
-    childCareSchoolAged: {
-      type: Number,
-      required: true,
-    },
-
-    // Total number of child care hours provided for school-aged children
-    childCareSchoolAgedHours: {
-      type: Number,
-      required: true,
-    },
-
-    // Number of children provided subsidized or scholarship tuition for child care
-    subsidiesOrScholarships: {
-      type: Number,
-      required: true,
-    },
-
-    /**************************
-     *        HOUSING         *
-     ***************************/
-
-    // Number of individuals provided rental assistance
-    rentalAssistance: {
-      type: Number,
-      required: true,
-    },
-
-    // Number of individuals provided utility assistance
-    utilityAssistance: {
-      type: Number,
-      required: true,
-    },
-
-    /**************************
-     *         OTHER          *
-     ***************************/
-
-    // Number of individuals provided other assistance
-    otherAssistance: {
-      type: Number,
-      required: true,
-    },
+    indicators: [IndicatorSchema],
 
     /**************************
      *      DEMOGRAPHICS      *
@@ -365,13 +273,13 @@ const SixMonthReportSchema = new Schema(
   }
 );
 
-SixMonthReportSchema.virtual('projects', {
+TwelveMonthReportSchema.virtual('projects', {
   ref: 'ProjectMember',
   localField: '_id',
   foreignField: 'memberId',
 });
 
-SixMonthReportSchema.virtual('activeProject', {
+TwelveMonthReportSchema.virtual('activeProject', {
   ref: 'ProjectMember',
   localField: '_id',
   foreignField: 'memberId',
@@ -379,9 +287,12 @@ SixMonthReportSchema.virtual('activeProject', {
   match: { active: true },
 });
 
-export interface SixMonthReportDocument
-  extends Omit<SixMonthReport, '_id'>,
+export interface TwelveMonthReportDocument
+  extends Omit<TwelveMonthReport, '_id'>,
     Document {}
 
-export default (models.Member as Model<SixMonthReportDocument>) ||
-  model<SixMonthReportDocument>('SixMonthReport', SixMonthReportSchema);
+export default (models.Member as Model<TwelveMonthReportDocument>) ||
+  model<TwelveMonthReportDocument>(
+    'TwelveMonthReport',
+    TwelveMonthReportSchema
+  );

@@ -1,2 +1,95 @@
-export * from './zipCodes';
-export * from './months';
+export const zipCodes = [
+  '37721',
+  '37934',
+  '37754',
+  '37938',
+  '37902',
+  '37909',
+  '37912',
+  '37914',
+  '37915',
+  '37916',
+  '37917',
+  '37918',
+  '37919',
+  '37920',
+  '37921',
+  '37922',
+  '37923',
+  '37924',
+  '37931',
+  '37932',
+  '37806',
+  '37849',
+] as const;
+
+export const months = [
+  'January',
+  'February',
+  'March',
+  'April',
+  'May',
+  'June',
+  'July',
+  'August',
+  'September',
+  'October',
+  'November',
+  'December',
+] as const;
+
+export const unitedWayFocusAreas = [
+  'Education',
+  'Financial Stability',
+  'Health',
+] as const;
+
+export const focusAreaIndicators = [
+  // HEALTH
+  '# of babies served that experience healthy birth outcomes',
+  '# of participants who decreased risk factors for infants born with NAS',
+  '# of participants accessing affordable dental services',
+  '# of participants accessing affordable mental health services',
+  '# of individuals served partaking in physical activity and/or healthy food access/nutrition programs # of individuals served with access to affordable healthcare services and supports',
+  '# of individuals served with access to affordable healthcare insurance',
+  '# of participating youth or adults completing a smoking cessation program',
+  '# of participants receiving diagnosis and treatment services for disabilities',
+  '# of participants who decrease substance use',
+  '# of participants with decreased risk factors for obesity',
+  '# of participants with decreased risk factors for chronic disease or premature death',
+
+  // Financial Stability
+  '# of individuals served who access affordable permanent housing',
+  '# of individuals served who access immediate crisis housing/shelter',
+  '# of individuals who access legal services',
+  '# of individuals served who receive job skills training',
+  '# of individuals served who access affordable financial products and services',
+  '# of individuals served who completed budget, credit or home ownership counseling # of individuals served who gain employment',
+  '# of veterans served who gain employment',
+  '# of individuals served who increase their wages',
+  '# of individuals served who reduced their debt',
+  '# of individuals served who earn job-relevant licenses, certificates, and/or credentials # of individuals served who are provided food',
+  '# of individuals served who are provided clothing',
+  '# of individuals served who are provided transportation',
+  '# of individuals served who are provided rent or utility assistance',
+
+  // Education
+  '# of participants who develop & improve growth in social, emotional & cognitive skills to succeed # of children (0-5 years) enrolled in high-quality early childhood programs',
+  '# of children assessed as kindergarten-ready using a standardized assessment tool',
+  '# of children (K-3) served reading at grade level',
+  '# of children served receiving literacy or numeracy supports in grades K-3',
+  '# of youth whose pre & post scores improve on school-based grade specific standardized testing # of youth advancing academically to the next grade level',
+  '# of youth graduating from high school in four years',
+  '# of youth served who maintain satisfactory or improve school attendance',
+  '# of children/youth accessing mental health supports',
+  '# of youth learning de-escalation and coping techniques',
+  '# of youth who reduce disciplinary incidents',
+  '# of youth with disabilities or special needs who reach appropriate developmental milestones',
+  '# of youth receiving supports for Adverse Childhood Experiences (ACES)',
+  '# of families/caregivers provided w/ information, resources, tools, trainings and/or teaching skills # of agency staff trained in Adverse Childhood Experiences (ACES)',
+  '# of youth enrolled in post-secondary education',
+  '# of youth enrolled in career and technical education',
+  '# of youth who participated in a work readiness skills program',
+  '# of youth engaged in volunteer or other non-academic activities',
+  '# of youth gaining knowledge and skills within structured out-of-school programming',
+] as const;

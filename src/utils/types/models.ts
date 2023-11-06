@@ -1,46 +1,20 @@
 import { z } from 'zod';
+import {
+  months,
+  zipCodes,
+  unitedWayFocusAreas,
+  focusAreaIndicators,
+} from '../constants';
 
 // Assuming months and zipCodes are arrays of string literals
-const monthsEnum = z.enum([
-  'January',
-  'February',
-  'March',
-  'April',
-  'May',
-  'June',
-  'July',
-  'August',
-  'September',
-  'October',
-  'November',
-  'December',
-]);
+const monthsEnum = z.enum(months);
 
 // Assuming months and zipCodes are arrays of string literals
-const zipCodesEnum = z.enum([
-  '37721',
-  '37934',
-  '37754',
-  '37938',
-  '37902',
-  '37909',
-  '37912',
-  '37914',
-  '37915',
-  '37916',
-  '37917',
-  '37918',
-  '37919',
-  '37920',
-  '37921',
-  '37922',
-  '37923',
-  '37924',
-  '37931',
-  '37932',
-  '37806',
-  '37849',
-]);
+const zipCodesEnum = z.enum(zipCodes);
+
+const focusAreasEnum = z.enum(unitedWayFocusAreas);
+
+const focusAreasIndicatorsEnum = z.enum(focusAreaIndicators);
 
 const TimePeriodSchema = z.object({
   month: monthsEnum,
@@ -102,6 +76,15 @@ const demographicsEnum = z.enum([
   'Age',
 ]);
 
+const IndicatorSchema = z.object({
+  category: focusAreasEnum,
+  number: z.number(),
+  goal: z.number(),
+  indicator: focusAreasIndicatorsEnum,
+  clientsServed: z.number(),
+  successfulClientsServied: z.number(),
+});
+
 const SixMonthReportSchema = z.object({
   periodStart: TimePeriodSchema,
   periodEnd: TimePeriodSchema,
@@ -127,13 +110,27 @@ const SixMonthReportSchema = z.object({
   otherAssistance: z.number(),
   reportedDemographics: z.array(demographicsEnum),
   zipCodeClientsServed: z.array(ZipCodeClientsServedSchema),
-  ClientsServedBySex: ClientsSexSchema,
-  ClientsServedByRace: ClientsRaceSchema,
-  ClientsServedByEthnicity: ClientEthnicitySchema,
-  ClientsServedByHouseholdIncome: ClientHouseholdIncomeSchema,
-  ClientsServedByAge: ClientAgeSchema,
+  clientsServedBySex: ClientsSexSchema,
+  clientsServedByRace: ClientsRaceSchema,
+  clientsServedByEthnicity: ClientEthnicitySchema,
+  clientsServedByHouseholdIncome: ClientHouseholdIncomeSchema,
+  clientsServedByAge: ClientAgeSchema,
+});
+
+const TwelveMonthReportSchema = z.object({
+  periodStart: TimePeriodSchema,
+  periodEnd: TimePeriodSchema,
+  nonProfit: z.string(), // Assuming ObjectId is represented as string in Zod
+  clientsServed: z.number(),
+  indicators: z.array(IndicatorSchema),
+  reportedDemographics: z.array(demographicsEnum),
+  zipCodeClientsServed: z.array(ZipCodeClientsServedSchema),
+  clientsServedBySex: ClientsSexSchema,
+  clientsServedByRace: ClientsRaceSchema,
+  clientsServedByEthnicity: ClientEthnicitySchema,
+  clientsServedByHouseholdIncome: ClientHouseholdIncomeSchema,
+  clientsServedByAge: ClientAgeSchema,
 });
 
 export type SixMonthReport = z.infer<typeof SixMonthReportSchema>;
-
-export default SixMonthReportSchema;
+export type TwelveMonthReport = z.infer<typeof TwelveMonthReportSchema>;
