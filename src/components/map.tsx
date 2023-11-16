@@ -16,8 +16,20 @@ function Map() {
   });
 
   return (
-    <div>
-      <MapContainer center={knoxvillePosition} zoom={13}>
+    <div
+      style={{
+        width: '100%',
+        height: '50%',
+      }}
+    >
+      <MapContainer
+        center={knoxvillePosition}
+        zoom={13}
+        style={{
+          maxWidth: '500px',
+          maxHeight: '500px',
+        }}
+      >
         <TileLayer
           attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
           url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
