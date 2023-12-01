@@ -91,3 +91,7 @@ pnpm test
 - `src/services`: Contains functionality for interacting with external data sources (e.g. APIs)
 - `src/types`: Contains TypeScript types and interfaces used across the project
 - `src/utils`: Contains utility functions used across the project
+
+## GeoJSON data link
+
+- https://github.com/OpenDataDE/State-zip-code-GeoJSON/blob/master/tn_tennessee_zip_codes_geo.min.json
