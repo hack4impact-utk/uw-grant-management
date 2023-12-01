@@ -27,6 +27,13 @@ export default function NavMenu() {
             Protected Route
           </li>
         </Link>
+        <Link href="/signin">
+          <li
+            className={pathname === '/signin' ? ACTIVE_ROUTE : INACTIVE_ROUTE}
+          >
+            Sign In
+          </li>
+        </Link>
       </ul>
     </div>
   );
