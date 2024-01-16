@@ -1,10 +1,10 @@
 'use client';
 import React, { useRef } from 'react';
-import './mapstyles.css';
+import '../../assets/css/map.css';
 import 'leaflet/dist/leaflet.css';
 import { MapContainer, TileLayer, GeoJSON } from 'react-leaflet';
 import L, { LatLngTuple, Layer, LeafletMouseEvent } from 'leaflet';
-import { geoJSONData } from '../utils/constants/geoData';
+import { geoJSONData } from '../../utils/constants/geoData';
 
 function Map() {
   const knoxvillePosition: LatLngTuple = [35.9606, -83.9207];
@@ -53,11 +53,11 @@ function Map() {
   };
 
   return (
-    <div style={{ width: '100%', height: '50%' }}>
+    <div style={{ width: '100%', height: '100%' }}>
       <MapContainer
         center={knoxvillePosition}
         zoom={10}
-        style={{ maxWidth: '500px', maxHeight: '500px' }}
+        style={{ height: '100%' }}
         ref={mapRef}
       >
         <TileLayer
