@@ -11,6 +11,7 @@ const Map = dynamic(() => import('../components/Map/'), { ssr: false });
 
 export default async function Home() {
   const appBarHeight = '64px';
+
   return (
     <div
       style={{
