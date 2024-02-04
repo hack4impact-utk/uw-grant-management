@@ -4,20 +4,30 @@ import Organization from '@/server/models/Organization';
 import Project from '@/server/models/Project';
 import { loadReportCSV, CSVReportRow } from '@/utils/parsing/csvParser';
 
+// Pull an integer from a numeric or empty string. Empty
+// string is defaulted to 0.
+function extractInt(value: string) {
+  return parseInt(value.trim() || '0');
+}
+
+// Create organization
 async function createOrg(orgName: string) {
   return await Organization.create({
     name: orgName,
   });
 }
 
-async function createProject(projectName: string, orgId: string | undefined) {
+// Create project
+async function createProject(projectName: string, orgId: string) {
   return await Project.create({
     organizationId: orgId,
     name: projectName,
   });
 }
 
+// Parse zip code data
 function parseZipCodeClientsServed(reportData: CSVReportRow) {
+  // Zip codes are prefixed by one of these town/city names.
   const zipCodePrefixes = [
     'Knoxville',
     'Farragut',
@@ -26,6 +36,7 @@ function parseZipCodeClientsServed(reportData: CSVReportRow) {
     'Powell',
     'Mascot',
   ];
+
   return Object.entries(reportData)
     .filter(([key]) => {
       return zipCodePrefixes.some((prefix) => key.includes(prefix));
@@ -33,13 +44,9 @@ function parseZipCodeClientsServed(reportData: CSVReportRow) {
     .map(([key, val]) => {
       return {
         zipCode: key.split(' ')[1],
-        clientsServed: parseInt(val.trim() || '0'),
+        clientsServed: extractInt(val),
       };
     });
-}
-
-function extractInt(value: string) {
-  return parseInt(value.trim() || '0');
 }
 
 async function createReport(
@@ -47,6 +54,7 @@ async function createReport(
   organizationId: string,
   projectId: string
 ) {
+  // If the report hasn't been created yet, create it.
   const existingReport = await Report.findOne({
     organizationId: organizationId,
     projectId: projectId,
@@ -153,19 +161,23 @@ async function createReport(
 
 dbConnect()
   .then(async () => {
+    // Load CSV data
     const data = await loadReportCSV('src/data/may-2023_september-2023.csv');
     const orgNameToIdMapper = new Map<string, string>();
 
+    // Find existing organization and create mapper
     const orgs = await Organization.find();
     orgs.forEach((org) => {
       orgNameToIdMapper.set(org.name, org.id);
     });
 
     for (const item of data) {
+      // Ignore rows that don't have crucial names
       if (!(item['Organization Name'].trim() && item['Project Name'].trim())) {
         continue;
       }
 
+      // Find organization id
       let orgId = orgNameToIdMapper.get(item['Organization Name']) || '';
       if (!orgId) {
         const newOrg = await createOrg(item['Organization Name']);
@@ -173,16 +185,17 @@ dbConnect()
         orgId = newOrg.id;
       }
 
+      // Find project id
       const existingProject = await Project.findOne({
         organizationId: orgId,
         name: item['Project Name'],
       });
 
-      const project = existingProject
-        ? existingProject
-        : await createProject(item['Project Name'], orgId);
+      const projectId = existingProject
+        ? existingProject.id
+        : (await createProject(item['Project Name'], orgId)).id;
 
-      await createReport(item, orgId, project.id);
+      await createReport(item, orgId, projectId);
     }
 
     process.exit();
