@@ -40,7 +40,6 @@ const ClientsRaceSchema = z.object({
   americanIndianAlaskan: z.number(),
   nativeHawaiianPacificIslander: z.number(),
   twoOrMoreRaces: z.number(),
-  other: z.number(),
   unknown: z.number(),
 });
 
@@ -89,6 +88,7 @@ const ReportSchema = z.object({
   periodStart: TimePeriodSchema,
   periodEnd: TimePeriodSchema,
   organizationId: z.string(), // Assuming ObjectId is represented as string in Zod
+  projectId: z.string(),
   clientsServed: z.number(),
   amountAwarded: z.number(),
   jobsCreated: z.number(),

@@ -38,11 +38,27 @@ function parseZipCodeClientsServed(reportData: CSVReportRow) {
     });
 }
 
+function extractInt(value: string) {
+  return parseInt(value.trim() || '0');
+}
+
 async function createReport(
   reportData: CSVReportRow,
   organizationId: string,
   projectId: string
 ) {
+  const existingReport = await Report.findOne({
+    organizationId: organizationId,
+    projectId: projectId,
+    'periodStart.month': 'May',
+    'periodStart.year': '2023',
+    'periodEnd.month': 'September',
+    'periodEnd.year': '2023',
+  });
+  if (existingReport) {
+    return;
+  }
+
   await Report.create({
     organizationId: organizationId,
     projectId: projectId,
@@ -57,56 +73,87 @@ async function createReport(
     amountAwarded: parseFloat(
       reportData['Amount Awarded'].replace('$', '').trim() || '0'
     ).toFixed(2),
-    clientsServed: parseInt(reportData['Clients Served'].trim() || '0'),
-    jobsCreated: parseInt(reportData['Clients Served'].trim() || '0'),
-    partners: parseInt(reportData['Partners'].trim() || '0'),
-    foodAssistance: parseInt(reportData['Food Assistance'].trim() || '0'),
-    foodKnowledgeAndSkills: parseInt(
-      reportData['Food Knowledge and Skills'].trim() || '0'
+    clientsServed: extractInt(reportData['Clients Served']),
+    jobsCreated: extractInt(reportData['Jobs Created']),
+    partners: extractInt(reportData['Partners']),
+    foodAssistance: extractInt(reportData['Food Assistance']),
+    foodKnowledgeAndSkills: extractInt(reportData['Food Knowledge and Skills']),
+    accessToHealthyFoods: extractInt(reportData['Access to Healthy Foods']),
+    producerSupport: extractInt(reportData['Producer Support']),
+    clothingAssistance: extractInt(reportData['Clothing Assistance']),
+    hygieneAssistance: extractInt(reportData['Hygiene Assistance']),
+    healthCareAssistance: extractInt(reportData['Health Care Assistance']),
+    mentalHealthAssistance: extractInt(reportData['Mental Health Assistance']),
+    childCareBirthToPreK: extractInt(reportData['Child Care BirthPreK']),
+    childCareBirthToPreKHours: extractInt(
+      reportData['Child Care BirthPreK Hours']
     ),
-    accessToHealthyFoods: parseInt(
-      reportData['Access to Healthy Foods'].trim() || '0'
+    childCareSchoolAged: extractInt(reportData['Child Care School Age']),
+    childCareSchoolAgedHours: extractInt(
+      reportData['Child Care SchoolAged Hours']
     ),
-    producerSupport: parseInt(reportData['Producer Support'].trim() || '0'),
-    clothingAssistance: parseInt(
-      reportData['Clothing Assistance'].trim() || '0'
+    subsidiesOrScholarships: extractInt(
+      reportData['Subsidies or Scholarships']
     ),
-    hygieneAssistance: parseInt(reportData['Hygiene Assistance'].trim() || '0'),
-    healthCareAssistance: parseInt(
-      reportData['Health Care Assistance'].trim() || '0'
-    ),
-    mentalHealthAssistance: parseInt(
-      reportData['Mental Health Assistance'].trim() || '0'
-    ),
-    childCareBirthToPreK: parseInt(
-      reportData['Child Care BirthPreK'].trim() || '0'
-    ),
-    childCareBirthToPreKHours: parseInt(
-      reportData['Child Care BirthPreK Hours'].trim() || '0'
-    ),
-    childCareSchoolAged: parseInt(
-      reportData['Child Care School Age'].trim() || '0'
-    ),
-    childCareSchoolAgedHours: parseInt(
-      reportData['Child Care SchoolAged Hours'].trim() || '0'
-    ),
-    subsidiesOrScholarships: parseInt(
-      reportData['Subsidies or Scholarships'].trim() || '0'
-    ),
-    rentalAssistance: parseInt(reportData['Rental Assistance'].trim() || '0'),
-    utilityAssistance: parseInt(reportData['Utility Assistance'].trim() || '0'),
-    otherAssistance: parseInt(reportData['Other Assistance'].trim() || '0'),
+    rentalAssistance: extractInt(reportData['Rental Assistance']),
+    utilityAssistance: extractInt(reportData['Utility Assistance']),
+    otherAssistance: extractInt(reportData['Other Assistance']),
     zipCodeClientsServed: parseZipCodeClientsServed(reportData),
+    clientsServedByAge: {
+      underFive: extractInt(reportData['Under Five']),
+      fiveToSeventeen: extractInt(reportData['Five  Seventeen']),
+      eighteenToTwentyFour: extractInt(reportData['Eighteen  TwentyFour']),
+      twentyFiveToFortyFour: extractInt(reportData['TwentyFive  FortyFour']),
+      fortyFiveToSixtyFour: extractInt(reportData['FortyFive  SixtyFour']),
+      sixtyFiveAndOver: extractInt(reportData['SixtyFive  Over']),
+      unknown: extractInt(reportData['Age Unknown']),
+    },
+    clientsServedBySex: {
+      female: extractInt(reportData['Female']),
+      male: extractInt(reportData['Male']),
+      other: extractInt(reportData['Other Sex']),
+      unknown: extractInt(reportData['Unknown Sex']),
+    },
+    clientsServedByRace: {
+      caucasian: extractInt(reportData['White']),
+      africanAmerican: extractInt(reportData['Black or African American']),
+      asianAmerican: extractInt(reportData['Asian American']),
+      americanIndianAlaskan: extractInt(
+        reportData['American Indian or Alaska Native']
+      ),
+      nativeHawaiianPacificIslander: extractInt(
+        reportData['Native Hawaiian and Pacific Islander']
+      ),
+      twoOrMoreRaces: extractInt(reportData['Two or More Races']),
+      unknown: extractInt(reportData['Race Unknown']),
+    },
+    clientsServedByHouseholdIncome: {
+      belowPoverty: extractInt(
+        reportData[
+          'Below Poverty Level 100 and below of poverty based on size of family unit'
+        ]
+      ),
+      lowIncome: extractInt(
+        reportData['Low Income 101200 of poverty based on size of family unit']
+      ),
+      aboveLowIncome: extractInt(
+        reportData[
+          'Above Low Income 201 and above based on size of family unit'
+        ]
+      ),
+      unknown: extractInt(reportData['Income Unknown']),
+    },
+    clientsServedByEthnicity: {
+      hispanicLatino: extractInt(reportData['Hispanic or Latino']),
+      notHispanicLatino: extractInt(reportData['Not Hispanic or Latino']),
+      unknown: extractInt(reportData['Unknown Ethnicity']),
+    },
   });
 }
 
 dbConnect()
   .then(async () => {
-    await Organization.deleteMany();
-    await Project.deleteMany();
-    await Report.deleteMany();
-
-    const data = await loadReportCSV('src/data/six-month-reports.csv');
+    const data = await loadReportCSV('src/data/may-2023_september-2023.csv');
     const orgNameToIdMapper = new Map<string, string>();
 
     const orgs = await Organization.find();
@@ -115,7 +162,7 @@ dbConnect()
     });
 
     for (const item of data) {
-      if (!item['Organization Name']) {
+      if (!(item['Organization Name'].trim() && item['Project Name'].trim())) {
         continue;
       }
 
@@ -126,14 +173,14 @@ dbConnect()
         orgId = newOrg.id;
       }
 
-      const projectQuery = await Project.find({
+      const existingProject = await Project.findOne({
         organizationId: orgId,
         name: item['Project Name'],
       });
 
-      const project = projectQuery.length
-        ? projectQuery[0]
-        : await createProject(item['Organization Name'], orgId);
+      const project = existingProject
+        ? existingProject
+        : await createProject(item['Project Name'], orgId);
 
       await createReport(item, orgId, project.id);
     }

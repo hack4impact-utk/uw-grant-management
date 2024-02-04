@@ -85,10 +85,6 @@ const ClientsRaceSchema = new Schema(
       type: Number,
       required: true,
     },
-    other: {
-      type: Number,
-      required: true,
-    },
     unknown: {
       type: Number,
       required: true,
