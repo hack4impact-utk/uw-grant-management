@@ -6,6 +6,7 @@ import Button from '@mui/material/Button';
 import IconButton from '@mui/material/IconButton';
 import MenuIcon from '@mui/icons-material/Menu';
 import dynamic from 'next/dynamic';
+import FilterPanel from '@/components/FilterPanel';
 
 const Map = dynamic(() => import('../components/Map/'), { ssr: false });
 
@@ -40,20 +41,7 @@ export default async function Home() {
       <div style={{ flexGrow: 1, height: `calc(100% - ${appBarHeight})` }}>
         <Grid container style={{ height: '100%' }}>
           <Grid item xs={3}>
-            <div
-              style={{
-                borderRight: '2px solid rgba(0, 0, 0, .2)',
-                height: '100%',
-              }}
-            >
-              <h2
-                style={{
-                  padding: '12px',
-                }}
-              >
-                Filters
-              </h2>
-            </div>
+            <FilterPanel />
           </Grid>
           <Grid item xs={9}>
             <Map />
