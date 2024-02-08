@@ -6,6 +6,7 @@ const Map = dynamic(() => import('../components/Map/'), { ssr: false });
 
 function Home() {
   const appBarHeight = '64px';
+
   return (
     <div
       style={{
