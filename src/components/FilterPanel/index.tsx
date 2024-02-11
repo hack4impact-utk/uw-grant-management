@@ -109,8 +109,6 @@ function FilterPanel() {
   );
 }
 
-
-
 /* Sample dropdown options. */
 const knoxCountyCities = [
   { label: 'Knoxville', value: 'Knoxville' },
