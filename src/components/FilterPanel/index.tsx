@@ -13,6 +13,7 @@ import { SelectChangeEvent } from '@mui/material/Select';
 import { useState } from 'react';
 
 function FilterPanel() {
+  const myVar = 'this';
   const [searchObject, setSearchObject] = useState({
     checkbox: false,
     radio: 'female',
