@@ -5,10 +5,14 @@ import 'leaflet/dist/leaflet.css';
 import { MapContainer, TileLayer, GeoJSON } from 'react-leaflet';
 import L, { LatLngTuple, Layer, LeafletMouseEvent } from 'leaflet';
 import { geoJSONData } from '../../utils/constants/geoData';
+import Drawer from '@mui/material/Drawer';
+import Box from '@mui/material/Box';
 
 function Map() {
   const knoxvillePosition: LatLngTuple = [35.9606, -83.9207];
   const mapRef = useRef<L.Map | null>(null);
+  const [drawerOpen, setDrawerOpen] = React.useState(false);
+  const [selectedZipCode, setSelectedZipCode] = React.useState('');
 
   const style = () => ({
     fillColor: 'blue',
@@ -41,12 +45,17 @@ function Map() {
     layer.closePopup();
   };
 
+  const handleLayerClick = (zipCode: string) => {
+    setSelectedZipCode(zipCode);
+    setDrawerOpen(true);
+  };  
+
   const onEachFeature = (feature: GeoJSON.Feature, layer: Layer) => {
     const zipCode = feature.properties?.ZCTA5CE10 as string;
     layer.on({
       mouseover: (e) => handleLayerMouseover(e, layer),
       mouseout: (e) => handleLayerMouseout(e, layer),
-      click: () => alert(`Zip code: ${zipCode}`),
+      click: () => handleLayerClick(zipCode),
     });
 
     layer.bindPopup(zipCode);
@@ -70,6 +79,18 @@ function Map() {
           onEachFeature={onEachFeature}
         />
       </MapContainer>
+      <Drawer
+        anchor='right'
+        open={drawerOpen}
+        onClose={() => setDrawerOpen(false)}
+      >
+        <Box
+          sx={{ width: 250 }}
+          role="presentation"
+        >
+          <p>Zip Code: {selectedZipCode}</p>
+        </Box>
+      </Drawer>
     </div>
   );
 }
