@@ -7,6 +7,7 @@ import Select from '@mui/material/Select';
 import MenuItem from '@mui/material/MenuItem';
 import Switch from '@mui/material/Switch';
 import TextField from '@mui/material/TextField';
+import Autocomplete from '@mui/material/Autocomplete';
 import { ChangeEvent } from 'react';
 import { SelectChangeEvent } from '@mui/material/Select';
 import { useState } from 'react';
@@ -94,8 +95,33 @@ function FilterPanel() {
           onChange={handleGeneralInputChange}
         />
       </div>
+      <br/>
+      <div>
+        <Autocomplete
+        disablePortal
+        id="combo-box-demo"
+        options={knoxCountyCities}
+        sx={{ width: 300 }}
+        renderInput={(params) => <TextField {...params} label="Locations in Knox County" />}
+      />
+      </div>
     </div>
   );
 }
+
+/* Sample dropdown options. */
+const knoxCountyCities = [
+  { label: 'Knoxville', value: 'Knoxville' },
+  { label: 'Farragut', value: 'Farragut' },
+  { label: 'Concord', value: 'Concord' },
+  { label: 'Powell', value: 'Powell' },
+  { label: 'Mascot', value: 'Mascot' },
+  { label: 'Halls Crossroads', value: 'Halls Crossroads' },
+  { label: 'Cedar Bluff', value: 'Cedar Bluff' },
+  { label: 'Strawberry Plains', value: 'Strawberry Plains' },
+  { label: 'Corryton', value: 'Corryton' },
+  { label: 'Carter', value: 'Carter' },
+  // Add more cities as needed
+];
 
 export default FilterPanel;
