@@ -19,6 +19,7 @@ function FilterPanel() {
     select: 10,
     switch: false,
     text_field: 'Hello, World!',
+    drop_down_field: undefined,
   });
 
   const updateSearchObject = (key: string, val: boolean | string | number) => {
@@ -102,6 +103,17 @@ function FilterPanel() {
         id="combo-box-demo"
         options={knoxCountyCities}
         sx={{ width: 300 }}
+        /* Here we use the second arguement by default to get the updated value from the dropdown.
+         * We give a name to it (any name). Aprt from this, we are using ternary operator below because 
+         * newValue.value might return null or undefined in some case but in the updateSearchObject, we 
+         * are allowing only (boolean | string | number).
+         */
+        onChange={(any, newValue) => {
+          updateSearchObject(
+            "drop_down_field",
+            newValue?.value ? newValue.value : ""
+          );
+        }}
         renderInput={(params) => <TextField {...params} label="Locations in Knox County" />}
       />
       </div>
@@ -121,7 +133,6 @@ const knoxCountyCities = [
   { label: 'Strawberry Plains', value: 'Strawberry Plains' },
   { label: 'Corryton', value: 'Corryton' },
   { label: 'Carter', value: 'Carter' },
-  // Add more cities as needed
 ];
 
 export default FilterPanel;
