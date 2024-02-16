@@ -7,9 +7,21 @@ export async function GET() {
   await dbConnect();
 
   try {
-    const zipCodeData = await Report.find({});
+    const zipCodeClientsServedMap = new Map<string, number>();
+    const reports = await Report.find({});
+    reports.forEach((report) => {
+      report.zipCodeClientsServed.forEach((zipCodeInfo) => {
+        let currentCount =
+          zipCodeClientsServedMap.get(zipCodeInfo.zipCode) || 0;
+        currentCount += zipCodeInfo.clientsServed;
+        zipCodeClientsServedMap.set(zipCodeInfo.zipCode, currentCount);
+      });
+    });
     return NextResponse.json(
-      { success: true, data: zipCodeData },
+      {
+        success: true,
+        data: Object.fromEntries(zipCodeClientsServedMap.entries()),
+      },
       { status: 200 }
     );
   } catch (error) {
