@@ -1,5 +1,3 @@
-import Navbar from '@/components/Navbar';
-
 import AccordionElement from '@/components/AccorionElement';
 
 // Accordion Prop Example
@@ -48,7 +46,6 @@ const sectionsProp = [
 function Nonprofits() {
   return (
     <div>
-      <Navbar />
       <AccordionElement sections={sectionsProp} />
     </div>
   );

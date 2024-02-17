@@ -1,6 +1,5 @@
 import Grid from '@mui/material/Grid';
 import dynamic from 'next/dynamic';
-import Navbar from '@/components/Navbar';
 
 const Map = dynamic(() => import('../components/Map/'), { ssr: false });
 
@@ -15,8 +14,6 @@ function Home() {
         height: '100vh',
       }}
     >
-      <Navbar />
-
       <div style={{ flexGrow: 1, height: `calc(100% - ${appBarHeight})` }}>
         <Grid container style={{ height: '100%' }}>
           <Grid item xs={3}>
