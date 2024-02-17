@@ -1,55 +1,31 @@
+'use client';
+import React, { useEffect, useState } from 'react';
 import Navbar from '@/components/Navbar';
-
 import AccordionElement from '@/components/AccorionElement';
 
-// Accordion Prop Example
-const sectionsProp = [
-  {
-    title: 'Nonprofit 1',
-    content: 'About Nonprofit 1',
-    subsections: [
-      {
-        title: 'They did x',
-        content: 'Lorem ipsum dolor sit, amet consectetur adipisicing elit.',
-      },
-      {
-        title: 'They did y',
-        content: 'Lorem ipsum dolor sit, amet consectetur adipisicing elit.',
-      },
-      {
-        title: 'They did z',
-        content: 'Lorem ipsum dolor sit, amet consectetur adipisicing elit.',
-      },
-      // Add more subsections if needed
-    ],
-  },
-  {
-    title: 'Nonprofit 2',
-    content: 'About Nonprofit 2',
-    subsections: [
-      {
-        title: 'They did x',
-        content: 'Lorem ipsum dolor sit, amet consectetur adipisicing elit.',
-      },
-      {
-        title: 'They did y',
-        content: 'Lorem ipsum dolor sit, amet consectetur adipisicing elit.',
-      },
-      {
-        title: 'They did z',
-        content: 'Lorem ipsum dolor sit, amet consectetur adipisicing elit.',
-      },
-      // Add more subsections if needed
-    ],
-  },
-  // Add more sections if needed
-];
-
 function Nonprofits() {
+  const [organizationSections, setOrganizationSections] = useState([]);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const response = await fetch('/api/getOrgInfo');
+        if (!response.ok) {
+          throw new Error('Failed to fetch');
+        }
+        const data = await response.json();
+        setOrganizationSections(data);
+      } catch (error) {
+        console.error('Error fetching organization info:', error);
+      }
+    };
+    fetchData();
+  }, []);
+
   return (
     <div>
       <Navbar />
-      <AccordionElement sections={sectionsProp} />
+      <AccordionElement organizationInfo={organizationSections} />
     </div>
   );
 }
