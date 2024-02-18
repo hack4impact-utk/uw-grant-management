@@ -40,6 +40,7 @@ function Map() {
       style={{
         width: '100%',
         height: '50%',
+        zIndex: 0
       }}
     >
       <MapContainer

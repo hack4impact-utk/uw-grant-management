@@ -20,7 +20,7 @@ export interface Feature {
   };
   geometry: {
     type: string;
-    coordinates: any;
+    coordinates: number[][][] | number[][][][];
   };
 }
 

@@ -3,13 +3,12 @@ import React, { useRef, useEffect, useState } from 'react';
 import '../../assets/css/map.css';
 import 'leaflet/dist/leaflet.css';
 import { MapContainer, TileLayer, GeoJSON } from 'react-leaflet';
-import { StyleFunction } from 'leaflet';
-import Drawer from '@mui/material/Drawer';
-import Box from '@mui/material/Box';
 
-import L, { LatLngTuple } from 'leaflet';
+import { Drawer } from '../Drawer';
+import Box from '@mui/material/Box';
+import L, { LatLngTuple, StyleFunction } from 'leaflet';
 import { geoJSONData } from '../../utils/constants/geoData';
-import { Feature as GeoJSONFeature, Geometry } from 'geojson';
+import { Feature, Geometry } from 'geojson';
 
 // Defining the Map component
 function Map() {
@@ -39,8 +38,8 @@ function Map() {
   }, []);
 
   // Function definitions related to Leaflet and styling
-  const getStyle: StyleFunction<any> = (feature) => {
-    const clientsServed = zipCodeData[feature?.properties.ZCTA5CE10] || 0;
+  const getStyle: StyleFunction = (feature) => {
+    const clientsServed = zipCodeData[feature?.properties?.ZCTA5CE10] || 0;
     const fillColor = getColor(clientsServed);
 
     return {
@@ -52,7 +51,7 @@ function Map() {
   };
 
   const onEachFeature = (
-    feature: GeoJSONFeature<Geometry, any>,
+    feature: Feature<Geometry, any>,
     layer: L.Layer
   ) => {
     if (layer instanceof L.Path) {

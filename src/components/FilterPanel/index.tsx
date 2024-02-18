@@ -8,7 +8,7 @@ import MenuItem from '@mui/material/MenuItem';
 import Switch from '@mui/material/Switch';
 import TextField from '@mui/material/TextField';
 import Autocomplete from '@mui/material/Autocomplete';
-import Drawer from '@mui/material/Drawer';
+import { Drawer } from '../Drawer';
 import { ChangeEvent } from 'react';
 import { SelectChangeEvent } from '@mui/material/Select';
 import { useState } from 'react';
@@ -67,17 +67,14 @@ const FilterPanel: React.FC<FilterPanelProps> = ({ open, onClose }) => {
     anchor="left"
     open={open}
     onClose={onClose}
-    BackdropProps={{
-      invisible: true,
-      sx: {
-        backdropFilter: 'none'
-      }
+    style={{
+      zIndex: 998,
     }}
   >
-      <h2
-        style={{
-          padding: '12px',
-        }}
+    <h2
+      style={{
+        padding: '12px',
+      }}
       >
         Filters
       </h2>
@@ -133,10 +130,10 @@ const FilterPanel: React.FC<FilterPanelProps> = ({ open, onClose }) => {
           options={knoxCountyCities}
           sx={{ width: 300 }}
           /* Here we use the second arguement by default to get the updated value from the dropdown.
-           * We give a name to it (any name). Aprt from this, we are using ternary operator below because
-           * newValue.value might return null or undefined in some case but in the updateSearchObject, we
-           * are allowing only (boolean | string | number).
-           */
+          * We give a name to it (any name). Aprt from this, we are using ternary operator below because
+          * newValue.value might return null or undefined in some case but in the updateSearchObject, we
+          * are allowing only (boolean | string | number).
+          */
           onChange={(any, newValue) => {
             updateSearchObject(
               'drop_down_field',

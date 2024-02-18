@@ -16,27 +16,9 @@ export default function Page() {
     setIsFilterPanelOpen(!isFilterPanelOpen);
   };
 
-  useEffect(() => {
-    const handleResize = () => {
-      if (window.innerWidth < 600) {
-        setIsFilterPanelOpen(false);
-      } else {
-        setIsFilterPanelOpen(true);
-      }
-    };
-
-    handleResize();
-
-    window.addEventListener('resize', handleResize);
-
-    return () => {
-      window.removeEventListener('resize', handleResize);
-    };
-  }, []);
-
   return (
     <div style={{ display: 'flex', flexDirection: 'column', height: '100vh' }}>
-      <AppBar position="static">
+      <AppBar position="relative" style={{zIndex: 999}}>
         <Toolbar>
           <IconButton
             size="large"
@@ -54,7 +36,7 @@ export default function Page() {
           <Button color="inherit">Example Button</Button>
         </Toolbar>
       </AppBar>
-      <FilterPanel open={isFilterPanelOpen} onClose={toggleFilterPanel} />
+      <FilterPanel open={isFilterPanelOpen} onClose={toggleFilterPanel}/>
       <Map />
     </div>
   );
