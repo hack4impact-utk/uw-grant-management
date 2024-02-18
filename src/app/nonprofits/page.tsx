@@ -1,6 +1,6 @@
 'use client';
+
 import React, { useEffect, useState } from 'react';
-import Navbar from '@/components/Navbar';
 import AccordionElement from '@/components/AccorionElement';
 
 function Nonprofits() {
@@ -24,7 +24,6 @@ function Nonprofits() {
 
   return (
     <div>
-      <Navbar />
       <AccordionElement organizationInfo={organizationSections} />
     </div>
   );
