@@ -2,16 +2,14 @@ import { z } from 'zod';
 import {
   months,
   zipCodes,
+  locations,
   unitedWayFocusAreas,
   focusAreaIndicators,
 } from '../constants';
 
-// Assuming months and zipCodes are arrays of string literals
 const monthsEnum = z.enum(months);
-
-// Assuming months and zipCodes are arrays of string literals
 const zipCodesEnum = z.enum(zipCodes);
-
+const locationsEnum = z.enum(locations);
 const focusAreasEnum = z.enum(unitedWayFocusAreas);
 
 const focusAreasIndicatorsEnum = z.enum(focusAreaIndicators);
@@ -24,6 +22,7 @@ const TimePeriodSchema = z.object({
 const ZipCodeClientsServedSchema = z.object({
   zipCode: zipCodesEnum,
   clientsServed: z.number(),
+  location: locationsEnum,
 });
 
 const ClientsSexSchema = z.object({

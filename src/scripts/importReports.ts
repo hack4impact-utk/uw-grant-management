@@ -3,6 +3,7 @@ import Report from '@/server/models/Report';
 import Organization from '@/server/models/Organization';
 import Project from '@/server/models/Project';
 import { loadReportCSV, CSVReportRow } from '@/utils/parsing/csvParser';
+import { locations } from '@/utils/constants';
 
 // Pull an integer from a numeric or empty string. Empty
 // string is defaulted to 0.
@@ -27,24 +28,16 @@ async function createProject(projectName: string, orgId: string) {
 
 // Parse zip code data
 function parseZipCodeClientsServed(reportData: CSVReportRow) {
-  // Zip codes are prefixed by one of these town/city names.
-  const zipCodePrefixes = [
-    'Knoxville',
-    'Farragut',
-    'Corryton',
-    'Heiskell',
-    'Powell',
-    'Mascot',
-  ];
-
   return Object.entries(reportData)
     .filter(([key]) => {
-      return zipCodePrefixes.some((prefix) => key.includes(prefix));
+      return locations.some((prefix) => key.includes(prefix));
     })
     .map(([key, val]) => {
+      const [location, zipCode] = key.split(' ');
       return {
-        zipCode: key.split(' ')[1],
+        zipCode: zipCode,
         clientsServed: extractInt(val),
+        location: location,
       };
     });
 }
@@ -161,6 +154,12 @@ async function createReport(
 
 dbConnect()
   .then(async () => {
+    if (process.argv.includes('--reset')) {
+      await Organization.deleteMany({});
+      await Project.deleteMany({});
+      await Report.deleteMany({});
+    }
+
     // Load CSV data
     const data = await loadReportCSV('src/data/may-2023_september-2023.csv');
     const orgNameToIdMapper = new Map<string, string>();
