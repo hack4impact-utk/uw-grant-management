@@ -1,25 +1,46 @@
-import Grid from '@mui/material/Grid';
+"use client"
+import React, { useState, useEffect } from 'react';
 import AppBar from '@mui/material/AppBar';
 import Toolbar from '@mui/material/Toolbar';
 import Typography from '@mui/material/Typography';
 import Button from '@mui/material/Button';
 import IconButton from '@mui/material/IconButton';
 import MenuIcon from '@mui/icons-material/Menu';
-import dynamic from 'next/dynamic';
+import FilterPanel from '../components/FilterPanel/index';
+import Map from '../components/Map/index';
 
-const Map = dynamic(() => import('../components/Map/'), { ssr: false });
-
-export default async function Home() {
+export default function Page() {
   const appBarHeight = '64px';
+  const [isFilterPanelOpen, setIsFilterPanelOpen] = useState(false);
+  const [appBarShift, setAppBarShift] = useState(false);
+
+  const toggleFilterPanel = () => {
+    setIsFilterPanelOpen(!isFilterPanelOpen);
+  };
+
+  useEffect(() => {
+    const handleResize = () => {
+      if (window.innerWidth < 600) {
+        setIsFilterPanelOpen(false);
+        setAppBarShift(false);
+      } else {
+        setIsFilterPanelOpen(true);
+        setAppBarShift(true);
+      }
+    };
+
+    handleResize();
+
+    window.addEventListener('resize', handleResize);
+
+    return () => {
+      window.removeEventListener('resize', handleResize);
+    };
+  }, []);
+
   return (
-    <div
-      style={{
-        display: 'flex',
-        flexDirection: 'column',
-        height: '100vh',
-      }}
-    >
-      <AppBar position="static">
+    <div style={{ display: 'flex', flexDirection: 'column', height: '100vh' }}>
+      <AppBar position="static" style={{ transition: 'margin 0.3s', marginLeft: appBarShift && isFilterPanelOpen ? '240px' : '0' }}>
         <Toolbar>
           <IconButton
             size="large"
@@ -27,6 +48,7 @@ export default async function Home() {
             color="inherit"
             aria-label="menu"
             sx={{ mr: 2 }}
+            onClick={toggleFilterPanel}
           >
             <MenuIcon />
           </IconButton>
@@ -36,28 +58,13 @@ export default async function Home() {
           <Button color="inherit">Example Button</Button>
         </Toolbar>
       </AppBar>
-      <div style={{ flexGrow: 1, height: `calc(100% - ${appBarHeight})` }}>
-        <Grid container style={{ height: '100%' }}>
-          <Grid item xs={3}>
-            <div
-              style={{
-                borderRight: '2px solid rgba(0, 0, 0, .2)',
-                height: '100%',
-              }}
-            >
-              <h2
-                style={{
-                  padding: '12px',
-                }}
-              >
-                Filters
-              </h2>
-            </div>
-          </Grid>
-          <Grid item xs={9}>
-            <Map />
-          </Grid>
-        </Grid>
+      <div style={{ flexGrow: 1, height: `calc(100% - ${appBarHeight})`, display: 'flex' }}>
+        <div style={{ width: isFilterPanelOpen ? '240px' : '0', transition: 'width 0.3s' }}>
+          <FilterPanel open={isFilterPanelOpen} onClose={toggleFilterPanel} />
+        </div>
+        <div style={{ flexGrow: 1, overflow: 'auto' }}>
+          <Map />
+        </div>
       </div>
     </div>
   );
