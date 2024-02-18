@@ -1,26 +1,41 @@
-import Grid from '@mui/material/Grid';
+"use client"
+import React, { useState, useEffect } from 'react';
 import AppBar from '@mui/material/AppBar';
 import Toolbar from '@mui/material/Toolbar';
 import Typography from '@mui/material/Typography';
 import Button from '@mui/material/Button';
 import IconButton from '@mui/material/IconButton';
 import MenuIcon from '@mui/icons-material/Menu';
-import dynamic from 'next/dynamic';
 import FilterPanel from '@/components/FilterPanel';
+import Map from '../components/Map/index';
 
-const Map = dynamic(() => import('../components/Map/'), { ssr: false });
+export default function Page() {
+  const [isFilterPanelOpen, setIsFilterPanelOpen] = useState(false);
 
-export default async function Home() {
-  const appBarHeight = '64px';
+  const toggleFilterPanel = () => {
+    setIsFilterPanelOpen(!isFilterPanelOpen);
+  };
+
+  useEffect(() => {
+    const handleResize = () => {
+      if (window.innerWidth < 600) {
+        setIsFilterPanelOpen(false);
+      } else {
+        setIsFilterPanelOpen(true);
+      }
+    };
+
+    handleResize();
+
+    window.addEventListener('resize', handleResize);
+
+    return () => {
+      window.removeEventListener('resize', handleResize);
+    };
+  }, []);
 
   return (
-    <div
-      style={{
-        display: 'flex',
-        flexDirection: 'column',
-        height: '100vh',
-      }}
-    >
+    <div style={{ display: 'flex', flexDirection: 'column', height: '100vh' }}>
       <AppBar position="static">
         <Toolbar>
           <IconButton
@@ -29,6 +44,7 @@ export default async function Home() {
             color="inherit"
             aria-label="menu"
             sx={{ mr: 2 }}
+            onClick={toggleFilterPanel}
           >
             <MenuIcon />
           </IconButton>
@@ -38,16 +54,8 @@ export default async function Home() {
           <Button color="inherit">Example Button</Button>
         </Toolbar>
       </AppBar>
-      <div style={{ flexGrow: 1, height: `calc(100% - ${appBarHeight})` }}>
-        <Grid container style={{ height: '100%' }}>
-          <Grid item xs={3}>
-            <FilterPanel />
-          </Grid>
-          <Grid item xs={9}>
-            <Map />
-          </Grid>
-        </Grid>
-      </div>
+      <FilterPanel open={isFilterPanelOpen} onClose={toggleFilterPanel} />
+      <Map />
     </div>
   );
 }

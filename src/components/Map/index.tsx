@@ -4,18 +4,19 @@ import '../../assets/css/map.css';
 import 'leaflet/dist/leaflet.css';
 import { MapContainer, TileLayer, GeoJSON } from 'react-leaflet';
 import { StyleFunction } from 'leaflet';
+import Drawer from '@mui/material/Drawer';
+import Box from '@mui/material/Box';
 
 import L, { LatLngTuple } from 'leaflet';
 import { geoJSONData } from '../../utils/constants/geoData';
 import { Feature as GeoJSONFeature, Geometry } from 'geojson';
 
-// import chroma from 'chroma-js';
-// import { NextApiRequest, NextApiResponse } from 'next';
-
 // Defining the Map component
 function Map() {
   const knoxvillePosition: LatLngTuple = [35.9606, -83.9207];
   const mapRef = useRef<L.Map | null>(null);
+  const [drawerOpen, setDrawerOpen] = React.useState(false);
+  const [selectedZipCode, setSelectedZipCode] = React.useState('');
 
   const getColor = (clientsServed: number) => {
     const ratio = clientsServed / 100;
@@ -68,7 +69,16 @@ function Map() {
 
       const popupContent = `Zip Code: ${zipCode}, Clients Served: ${clientsServed || 'No data'}`;
       layer.bindPopup(popupContent);
+
+      layer.on({
+        click: () => handleLayerClick(zipCode),
+      });
     }
+  }
+
+  const handleLayerClick = (zipCode: string) => {
+    setSelectedZipCode(zipCode);
+    setDrawerOpen(true);
   };
 
   return (
@@ -89,6 +99,18 @@ function Map() {
           onEachFeature={onEachFeature}
         />
       </MapContainer>
+      <Drawer
+        anchor='right'
+        open={drawerOpen}
+        onClose={() => setDrawerOpen(false)}
+      >
+        <Box
+          sx={{ width: 250 }}
+          role="presentation"
+        >
+          <p>Zip Code: {selectedZipCode}</p>
+        </Box>
+      </Drawer>
     </div>
   );
 }

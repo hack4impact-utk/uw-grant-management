@@ -8,11 +8,30 @@ import MenuItem from '@mui/material/MenuItem';
 import Switch from '@mui/material/Switch';
 import TextField from '@mui/material/TextField';
 import Autocomplete from '@mui/material/Autocomplete';
+import Drawer from '@mui/material/Drawer';
 import { ChangeEvent } from 'react';
 import { SelectChangeEvent } from '@mui/material/Select';
 import { useState } from 'react';
 
-function FilterPanel() {
+interface FilterPanelProps {
+  open: boolean;
+  onClose: () => void;
+}
+
+const knoxCountyCities = [
+  { label: 'Knoxville', value: 'Knoxville' },
+  { label: 'Farragut', value: 'Farragut' },
+  { label: 'Concord', value: 'Concord' },
+  { label: 'Powell', value: 'Powell' },
+  { label: 'Mascot', value: 'Mascot' },
+  { label: 'Halls Crossroads', value: 'Halls Crossroads' },
+  { label: 'Cedar Bluff', value: 'Cedar Bluff' },
+  { label: 'Strawberry Plains', value: 'Strawberry Plains' },
+  { label: 'Corryton', value: 'Corryton' },
+  { label: 'Carter', value: 'Carter' },
+];
+
+const FilterPanel: React.FC<FilterPanelProps> = ({ open, onClose }) => {
   const [searchObject, setSearchObject] = useState({
     checkbox: false,
     radio: 'female',
@@ -44,7 +63,17 @@ function FilterPanel() {
   };
 
   return (
-    <div>
+  <Drawer
+    anchor="left"
+    open={open}
+    onClose={onClose}
+    BackdropProps={{
+      invisible: true,
+      sx: {
+        backdropFilter: 'none'
+      }
+    }}
+  >
       <h2
         style={{
           padding: '12px',
@@ -119,22 +148,8 @@ function FilterPanel() {
           )}
         />
       </div>
-    </div>
+    </Drawer>
   );
 }
-
-/* Sample dropdown options. */
-const knoxCountyCities = [
-  { label: 'Knoxville', value: 'Knoxville' },
-  { label: 'Farragut', value: 'Farragut' },
-  { label: 'Concord', value: 'Concord' },
-  { label: 'Powell', value: 'Powell' },
-  { label: 'Mascot', value: 'Mascot' },
-  { label: 'Halls Crossroads', value: 'Halls Crossroads' },
-  { label: 'Cedar Bluff', value: 'Cedar Bluff' },
-  { label: 'Strawberry Plains', value: 'Strawberry Plains' },
-  { label: 'Corryton', value: 'Corryton' },
-  { label: 'Carter', value: 'Carter' },
-];
 
 export default FilterPanel;
