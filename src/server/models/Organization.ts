@@ -24,5 +24,6 @@ export interface OrganizationDocument
   extends Omit<Organization, '_id'>,
     Document {}
 
-export default (models.Member as Model<OrganizationDocument>) ||
+// Corrected to check models.Organization instead of models.Member
+export default (models.Organization as Model<OrganizationDocument>) ||
   model<OrganizationDocument>('Organization', OrganizationSchema);
