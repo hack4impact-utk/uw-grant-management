@@ -35,6 +35,9 @@ dependencies:
   d3:
     specifier: ^7.8.5
     version: 7.8.5
+  d3-scale:
+    specifier: ^4.0.2
+    version: 4.0.2
   dotenv:
     specifier: ^16.4.1
     version: 16.4.1
@@ -82,6 +85,9 @@ devDependencies:
   '@types/chroma-js':
     specifier: ^2.4.4
     version: 2.4.4
+  '@types/d3-scale':
+    specifier: ^4.0.8
+    version: 4.0.8
   '@types/geojson':
     specifier: ^7946.0.14
     version: 7946.0.14
@@ -1592,6 +1598,16 @@ packages:
 
   /@types/chroma-js@2.4.4:
     resolution: {integrity: sha512-/DTccpHTaKomqussrn+ciEvfW4k6NAHzNzs/sts1TCqg333qNxOhy8TNIoQCmbGG3Tl8KdEhkGAssb1n3mTXiQ==}
+    dev: true
+
+  /@types/d3-scale@4.0.8:
+    resolution: {integrity: sha512-gkK1VVTr5iNiYJ7vWDI+yUFFlszhNMtVeneJ6lUTKPjprsvLLI9/tgEGiXJOnlINJA8FyA88gfnQsHbybVZrYQ==}
+    dependencies:
+      '@types/d3-time': 3.0.3
+    dev: true
+
+  /@types/d3-time@3.0.3:
+    resolution: {integrity: sha512-2p6olUZ4w3s+07q3Tm2dbiMZy5pCDfYwtLXXHUnVzXgQlZ/OyPtUz6OL382BkOuGlLXqfT+wqv8Fw2v8/0geBw==}
     dev: true
 
   /@types/geojson@7946.0.14:
