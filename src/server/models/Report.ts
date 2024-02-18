@@ -1,6 +1,6 @@
 import { Model, Document, Schema, model, models } from 'mongoose';
 import { Report } from '@/utils/types/models';
-import { zipCodes, months } from '@/utils/constants';
+import { zipCodes, months, locations } from '@/utils/constants';
 
 const TimePeriodSchema = new Schema(
   {
@@ -21,6 +21,11 @@ const TimePeriodSchema = new Schema(
 
 const ZipCodeClientsServedSchema = new Schema(
   {
+    location: {
+      type: String,
+      required: true,
+      enum: locations,
+    },
     zipCode: {
       type: String,
       required: true,
@@ -248,7 +253,7 @@ const ReportSchema = new Schema(
      *        HYGIENE         *
      ***************************/
 
-    // Nu,ber of individuals provided hygiene assistance
+    // Number of individuals provided hygiene assistance
     hygieneAssistance: {
       type: Number,
       required: true,
