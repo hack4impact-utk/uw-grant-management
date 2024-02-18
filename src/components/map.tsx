@@ -5,6 +5,7 @@ import { MapContainer, TileLayer, GeoJSON } from 'react-leaflet';
 import { LatLngTuple } from 'leaflet';
 import { geoJSONData } from '../utils/constants/geoData';
 
+
 function Map() {
   const knoxvillePosition: LatLngTuple = [35.9606, -83.9207]; // Latitude and Longitude of Knoxville, TN
 
