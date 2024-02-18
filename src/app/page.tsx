@@ -8,6 +8,8 @@ import IconButton from '@mui/material/IconButton';
 import MenuIcon from '@mui/icons-material/Menu';
 import FilterPanel from '@/components/FilterPanel';
 import Map from '../components/Map/index';
+import Link from 'next/link';
+import { usePathname } from 'next/navigation';
 
 export default function Page() {
   const [isFilterPanelOpen, setIsFilterPanelOpen] = useState(false);
@@ -15,6 +17,12 @@ export default function Page() {
   const toggleFilterPanel = () => {
     setIsFilterPanelOpen(!isFilterPanelOpen);
   };
+
+  const pathname = usePathname();
+
+  const buttonColor = (route: string) => ({
+    color: route === pathname ? 'orange' : 'white',
+  });
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column', height: '100vh' }}>
@@ -33,7 +41,9 @@ export default function Page() {
           <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
             United Way Grant Management
           </Typography>
-          <Button color="inherit">Example Button</Button>
+          <Link href="/nonprofits" passHref>
+            <Button sx={buttonColor('/nonprofits')}>Nonprofits</Button>
+          </Link>
         </Toolbar>
       </AppBar>
       <FilterPanel open={isFilterPanelOpen} onClose={toggleFilterPanel}/>

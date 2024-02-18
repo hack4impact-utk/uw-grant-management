@@ -1,5 +1,3 @@
-'use server';
-
 import dbConnect from '@/server';
 import { NextResponse } from 'next/server';
 import Organization from '@/server/models/Organization';
