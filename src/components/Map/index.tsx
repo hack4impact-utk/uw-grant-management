@@ -7,7 +7,7 @@ import { StyleFunction } from 'leaflet';
 import L, { LatLngTuple } from 'leaflet';
 import { geoJSONData } from '../../utils/constants/geoData';
 import { Feature as GeoJSONFeature, Geometry } from 'geojson';
-//import { scaleQuantile } from 'd3-scale';
+import { NumberValue, scaleQuantile } from 'd3-scale';
 import CircularProgress from '@mui/material/CircularProgress';
 import Box from '@mui/material/Box';
 
@@ -36,25 +36,39 @@ function Map() {
 
   // this function broke last minute
 
-  // const clientsServedArray = Object.values(zipCodeData);
-  // const quantileScale = scaleQuantile()
-  //   .domain(clientsServedArray)
-  //   .range([
-  //     "rgba(205, 21, 21, 0.8)",
-  //     "rgba(205, 92, 92, 0.8)",
-  //     "rgba(196, 229, 33, 0.53)",
-  //     "rgba(103, 187, 47, 0.6)",
-  //     "rgba(150, 222, 57, 0.5)",
-  //     "rgba(35, 222, 67, 0.9)",
-  //   ]);
-  // const getColor = (clientsServed) => {
-  //   return quantileScale(clientsServed);
-  // };
+  const clientsServedArray = Object.values(zipCodeData).map(Number);
 
-  const getColor = (clientsServed: number) => {
-    const ratio = clientsServed / 100;
-    return `rgba(${255 * (1 - ratio)}, ${255 * ratio}, 0, 0.7)`;
+  const quantileScale = scaleQuantile()
+    .domain(clientsServedArray)
+    .range([0, 1, 2, 3, 4, 5]);
+
+  const colors = [
+    'rgba(255, 0, 0, 0.9)',
+    'rgba(245, 80, 0, 0.8)',
+    'rgba(235, 162, 0, 0.8)',
+    'rgba(208, 224, 0, 0.8)',
+    'rgba(150, 222, 57, 0.8)',
+    'rgba(35, 222, 67, 0.9)',
+  ];
+
+  // const colors = [
+  //   "rgba(255, 0, 0, 0.9)",
+  //   "rgba(245, 40, 0, 0.74)",
+  //   "rgba(225, 130, 0, 0.6)",
+  //   "rgba(130, 190, 15, 0.40)",
+  //   "rgba(120, 220, 40, 0.7)",
+  //   "rgba(0, 255, 0, 0.8)",
+  // ];
+
+  const getColor = (clientsServed: NumberValue) => {
+    const index = quantileScale(clientsServed);
+    return colors[index];
   };
+
+  // const getColor = (clientsServed: number) => {
+  //   const ratio = clientsServed / 100;
+  //   return `rgba(${255 * (1 - ratio)}, ${255 * ratio}, 0, 0.7)`;
+  // };
 
   const getStyle: StyleFunction<any> = (feature) => {
     const clientServed = zipCodeData[feature?.properties.ZCTA5CE10] || 0;
