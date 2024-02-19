@@ -6,12 +6,25 @@ import Button from '@mui/material/Button';
 import IconButton from '@mui/material/IconButton';
 import MenuIcon from '@mui/icons-material/Menu';
 import dynamic from 'next/dynamic';
+import { getServerSession } from 'next-auth/next';
+import { redirect } from 'next/navigation';
+import authOptions from './api/auth/[...nextauth]/config';
 
 const Map = dynamic(() => import('../components/Map/'), { ssr: false });
 
-export default async function Home() {
-  const appBarHeight = '64px';
+export default async function HomePage() {
+  /* 
+    For auth, check the session. If no session, redirect to sign in.
+    Redirecting here is needed in order to direct to a client side page that is capable of calling useRequireAuth() function.
+    Also check if auth is disabled in ENV.
+  */
+  const session = await getServerSession(authOptions);
 
+  if (!session && process.env.NEXT_PUBLIC_DISABLE_AUTH === 'false') {
+    redirect('/auth/signin');
+  }
+
+  const appBarHeight = '64px';
   return (
     <div
       style={{
