@@ -34,8 +34,8 @@ function Map() {
     getZipCodeData();
   }, []);
 
-  // this function broke last minute
-
+  // This groups each zipcode based on their clients served and assigns
+  // the zipcode to a color
   const clientsServedArray = Object.values(zipCodeData).map(Number);
 
   const quantileScale = scaleQuantile()
@@ -51,24 +51,10 @@ function Map() {
     'rgba(35, 222, 67, 0.9)',
   ];
 
-  // const colors = [
-  //   "rgba(255, 0, 0, 0.9)",
-  //   "rgba(245, 40, 0, 0.74)",
-  //   "rgba(225, 130, 0, 0.6)",
-  //   "rgba(130, 190, 15, 0.40)",
-  //   "rgba(120, 220, 40, 0.7)",
-  //   "rgba(0, 255, 0, 0.8)",
-  // ];
-
   const getColor = (clientsServed: NumberValue) => {
     const index = quantileScale(clientsServed);
     return colors[index];
   };
-
-  // const getColor = (clientsServed: number) => {
-  //   const ratio = clientsServed / 100;
-  //   return `rgba(${255 * (1 - ratio)}, ${255 * ratio}, 0, 0.7)`;
-  // };
 
   const getStyle: StyleFunction<any> = (feature) => {
     const clientServed = zipCodeData[feature?.properties.ZCTA5CE10] || 0;
