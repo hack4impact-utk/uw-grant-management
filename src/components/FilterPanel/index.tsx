@@ -11,7 +11,7 @@ import Autocomplete from '@mui/material/Autocomplete';
 import { Drawer } from '../Drawer';
 import { ChangeEvent } from 'react';
 import { SelectChangeEvent } from '@mui/material/Select';
-import { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 
 interface FilterPanelProps {
   open: boolean;
@@ -41,6 +41,42 @@ const FilterPanel: React.FC<FilterPanelProps> = ({ open, onClose }) => {
     drop_down_field: undefined,
   });
 
+  type AssistanceMetricOption = {
+    label: string;
+    value: string;
+  };
+
+  const [assistanceMetrics, setAssistanceMetrics] = useState<
+    AssistanceMetricOption[]
+  >([]);
+
+  const getAssistanceData = async () => {
+    try {
+      const response = await fetch('/api/assistance/');
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+      const data = await response.json();
+      const metricsData = data.numericFieldsSummary ?? {};
+
+      const newAssistanceMetrics = Object.keys(metricsData).map((key) => ({
+        label: key
+          .split(/(?=[A-Z])/)
+          .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
+          .join(' '),
+        value: key,
+      }));
+
+      setAssistanceMetrics(newAssistanceMetrics);
+    } catch (error) {
+      console.error('Failed to fetch assistance data:', error);
+    }
+  };
+
+  useEffect(() => {
+    getAssistanceData();
+  }, []);
+
   const updateSearchObject = (key: string, val: boolean | string | number) => {
     setSearchObject({
       ...searchObject,
@@ -63,18 +99,18 @@ const FilterPanel: React.FC<FilterPanelProps> = ({ open, onClose }) => {
   };
 
   return (
-  <Drawer
-    anchor="left"
-    open={open}
-    onClose={onClose}
-    style={{
-      zIndex: 998,
-    }}
-  >
-    <h2
+    <Drawer
+      anchor="left"
+      open={open}
+      onClose={onClose}
       style={{
-        padding: '12px',
+        zIndex: 998,
       }}
+    >
+      <h2
+        style={{
+          padding: '12px',
+        }}
       >
         Filters
       </h2>
@@ -129,11 +165,6 @@ const FilterPanel: React.FC<FilterPanelProps> = ({ open, onClose }) => {
           id="combo-box-demo"
           options={knoxCountyCities}
           sx={{ width: 300 }}
-          /* Here we use the second arguement by default to get the updated value from the dropdown.
-          * We give a name to it (any name). Aprt from this, we are using ternary operator below because
-          * newValue.value might return null or undefined in some case but in the updateSearchObject, we
-          * are allowing only (boolean | string | number).
-          */
           onChange={(any, newValue) => {
             updateSearchObject(
               'drop_down_field',
@@ -145,8 +176,24 @@ const FilterPanel: React.FC<FilterPanelProps> = ({ open, onClose }) => {
           )}
         />
       </div>
+      <div>
+        <Autocomplete
+          disablePortal
+          options={assistanceMetrics}
+          sx={{ width: 300, mt: 2 }}
+          onChange={(event, newValue) => {
+            updateSearchObject(
+              'metrics_field',
+              newValue?.value ? newValue.value : ''
+            );
+          }}
+          renderInput={(params) => (
+            <TextField {...params} label="Filter by Metrics" />
+          )}
+        />
+      </div>
     </Drawer>
   );
-}
+};
 
 export default FilterPanel;
