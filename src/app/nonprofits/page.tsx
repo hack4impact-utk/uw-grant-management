@@ -1,7 +1,6 @@
 'use client';
-
 import React, { useEffect, useState } from 'react';
-import AccordionElement from '@/components/AccorionElement';
+import AccordionElement from '@/components/AccordionElement';
 
 function Nonprofits() {
   const [organizationSections, setOrganizationSections] = useState([]);

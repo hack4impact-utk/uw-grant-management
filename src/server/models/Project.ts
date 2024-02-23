@@ -27,5 +27,6 @@ const ProjectSchema = new Schema(
 
 export interface ProjectDocument extends Omit<Project, '_id'>, Document {}
 
-export default (models.Member as Model<ProjectDocument>) ||
+// Corrected to check models.Project instead of models.Member
+export default (models.Project as Model<ProjectDocument>) ||
   model<ProjectDocument>('Project', ProjectSchema);
