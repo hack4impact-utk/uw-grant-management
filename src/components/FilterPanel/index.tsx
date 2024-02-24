@@ -17,6 +17,18 @@ interface FilterPanelProps {
   open: boolean;
   onClose: () => void;
 }
+interface Option {
+  _id: {
+      $oid: string;
+  };
+  name: string;
+  createdAt: {
+      $date: string;
+  };
+  updatedAt: {
+      $date: string;
+  };
+}
 
 const knoxCountyCities = [
   { label: 'Knoxville', value: 'Knoxville' },
@@ -39,7 +51,10 @@ const FilterPanel: React.FC<FilterPanelProps> = ({ open, onClose }) => {
     switch: false,
     text_field: 'Hello, World!',
     drop_down_field: undefined,
+    organizations_filters: [],
   });
+
+  const [organizationSections, setOrganizationSections] = useState([]);
 
   type AssistanceMetricOption = {
     label: string;
@@ -74,10 +89,26 @@ const FilterPanel: React.FC<FilterPanelProps> = ({ open, onClose }) => {
   };
 
   useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const response = await fetch('/api/organizations');
+        if (!response.ok) {
+          throw new Error('Failed to fetch');
+        }
+        const data = await response.json();
+        setOrganizationSections(data);
+      } catch (error) {
+        console.error('Error fetching organization info:', error);
+      }
+    };
+    fetchData();
+  }, []);
+
+  useEffect(() => {
     getAssistanceData();
   }, []);
 
-  const updateSearchObject = (key: string, val: boolean | string | number) => {
+  const updateSearchObject = (key: string, val: boolean | string | number | Array<object>) => {
     setSearchObject({
       ...searchObject,
       [key]: val,
@@ -191,6 +222,29 @@ const FilterPanel: React.FC<FilterPanelProps> = ({ open, onClose }) => {
             <TextField {...params} label="Filter by Metrics" />
           )}
         />
+      </div>
+      <div>
+      <Autocomplete
+        multiple
+        id="tags-outlined"
+        options={organizationSections}
+        sx={{ width: 300, mt: 2 }}
+        onChange={(event, newValue) => {
+          updateSearchObject(
+            'organizations_filters',
+            newValue? newValue : []
+          );
+        }}
+        getOptionLabel={(option: Option) => option?.name}
+        filterSelectedOptions
+        renderInput={(params) => (
+          <TextField
+            {...params}
+            label="Filter By Organizations"
+            placeholder="Type Organization Name"
+          />
+        )}
+      />
       </div>
     </Drawer>
   );
