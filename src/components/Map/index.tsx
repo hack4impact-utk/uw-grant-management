@@ -37,8 +37,8 @@ export default function Map() {
     getZipCodeData();
   }, []);
 
-  // this function broke last minute
-
+  // This groups each zipcode based on their clients served and assigns
+  // the zipcode to a color
   const clientsServedArray = Object.values(zipCodeData).map(Number);
 
   const quantileScale = scaleQuantile()
@@ -53,15 +53,6 @@ export default function Map() {
     'rgba(150, 222, 57, 0.8)',
     'rgba(35, 222, 67, 0.9)',
   ];
-
-  // const colors = [
-  //   "rgba(255, 0, 0, 0.9)",
-  //   "rgba(245, 40, 0, 0.74)",
-  //   "rgba(225, 130, 0, 0.6)",
-  //   "rgba(130, 190, 15, 0.40)",
-  //   "rgba(120, 220, 40, 0.7)",
-  //   "rgba(0, 255, 0, 0.8)",
-  // ];
 
   const getColor = (clientsServed: NumberValue) => {
     const index = quantileScale(clientsServed);

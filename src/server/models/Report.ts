@@ -378,5 +378,5 @@ const ReportSchema = new Schema(
 
 export interface ReportDocument extends Omit<Report, '_id'>, Document {}
 
-export default (models.Member as Model<ReportDocument>) ||
+export default (models.Report as Model<ReportDocument>) ||
   model<ReportDocument>('Report', ReportSchema);
