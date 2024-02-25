@@ -46,6 +46,10 @@ const FilterPanel: React.FC<FilterPanelProps> = ({ open, onClose }) => {
     value: string;
   };
 
+  const [metricValues, setMetricValues] = useState<AssistanceMetricOption[]>(
+    []
+  );
+
   const [assistanceMetrics, setAssistanceMetrics] = useState<
     AssistanceMetricOption[]
   >([]);
@@ -178,15 +182,17 @@ const FilterPanel: React.FC<FilterPanelProps> = ({ open, onClose }) => {
       </div>
       <div>
         <Autocomplete
-          disablePortal
+          multiple
+          value={metricValues}
+          onChange={(event, newValue) => {
+            setMetricValues(newValue);
+            const concatenatedValues = newValue
+              .map((option) => option.value)
+              .join(',');
+            updateSearchObject('metrics_field', concatenatedValues);
+          }}
           options={assistanceMetrics}
           sx={{ width: 300, mt: 2 }}
-          onChange={(event, newValue) => {
-            updateSearchObject(
-              'metrics_field',
-              newValue?.value ? newValue.value : ''
-            );
-          }}
           renderInput={(params) => (
             <TextField {...params} label="Filter by Metrics" />
           )}
