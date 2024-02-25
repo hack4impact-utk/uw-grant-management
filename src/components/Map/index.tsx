@@ -2,7 +2,7 @@
 import React, { useRef, useState } from 'react';
 import '../../assets/css/map.css';
 import 'leaflet/dist/leaflet.css';
-import { MapContainer, TileLayer, GeoJSON } from 'react-leaflet';
+import { MapContainer, TileLayer, GeoJSON, Popup } from 'react-leaflet';
 import L, { LatLngTuple, Layer, LeafletMouseEvent } from 'leaflet';
 import { geoJSONData } from '../../utils/constants/geoData';
 import Card from '@mui/material/Card';
@@ -12,6 +12,7 @@ function Map() {
   const knoxvillePosition: LatLngTuple = [35.9606, -83.9207];
   const mapRef = useRef<L.Map | null>(null);
   const [hoveredRegion, setHoveredRegion] = useState<string | null>(null);
+  const [popupContent, setPopupContent] = useState<string | null>(null);
 
   const style = () => ({
     fillColor: 'blue',
@@ -44,6 +45,11 @@ function Map() {
     resetHighlight(e);
   };
 
+  const handleLayerClick = (e: LeafletMouseEvent) => {
+    const zipCode = (e.target as any).feature.properties?.ZCTA5CE10 as string;
+    setPopupContent(zipCode);
+  };
+
   return (
     <div style={{ width: '100%', height: '100%' }}>
       <MapContainer
@@ -63,12 +69,15 @@ function Map() {
             layer.on({
               mouseover: (e: LeafletMouseEvent) => handleLayerMouseover(e, layer),
               mouseout: (e: LeafletMouseEvent) => handleLayerMouseout(e, layer),
+              click: handleLayerClick,
             });
           }}
-        />
+        >
+          <Popup>{popupContent}</Popup>
+        </GeoJSON>
       </MapContainer>
       {hoveredRegion && (
-        <Card style={{ position: 'absolute', top: 20, left: 20, zIndex: 1000 }}>
+        <Card style={{ position: 'absolute', top: 84, right: 20, zIndex: 400 }}>
           <CardContent>
             <h2>{hoveredRegion}</h2>
             {/* Add additional content as needed */}
