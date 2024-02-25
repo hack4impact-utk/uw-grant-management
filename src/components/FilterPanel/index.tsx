@@ -56,12 +56,12 @@ const FilterPanel: React.FC<FilterPanelProps> = ({ open, onClose }) => {
 
   const getAssistanceData = async () => {
     try {
-      const response = await fetch('/api/assistance/');
+      const response = await fetch('/api/metrics/');
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`);
       }
       const data = await response.json();
-      const metricsData = data.numericFieldsSummary ?? {};
+      const metricsData = data.metricsSummary ?? {};
 
       const newAssistanceMetrics = Object.keys(metricsData).map((key) => ({
         label: key
