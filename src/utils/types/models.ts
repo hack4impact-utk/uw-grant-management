@@ -1,29 +1,27 @@
 import { z } from 'zod';
 import {
-  months,
   zipCodes,
+  locations,
   unitedWayFocusAreas,
   focusAreaIndicators,
 } from '../constants';
 
-// Assuming months and zipCodes are arrays of string literals
-const monthsEnum = z.enum(months);
-
-// Assuming months and zipCodes are arrays of string literals
+// const monthsEnum = z.enum(months);
 const zipCodesEnum = z.enum(zipCodes);
-
+const locationsEnum = z.enum(locations);
 const focusAreasEnum = z.enum(unitedWayFocusAreas);
 
 const focusAreasIndicatorsEnum = z.enum(focusAreaIndicators);
 
-const TimePeriodSchema = z.object({
-  month: monthsEnum,
+export const TimePeriodSchema = z.object({
+  month: z.string(),
   year: z.string(),
 });
 
 const ZipCodeClientsServedSchema = z.object({
   zipCode: zipCodesEnum,
   clientsServed: z.number(),
+  location: locationsEnum,
 });
 
 const ClientsSexSchema = z.object({
@@ -146,3 +144,4 @@ export type Report = z.infer<typeof ReportSchema>;
 export type TwelveMonthReport = z.infer<typeof TwelveMonthReportSchema>;
 export type Organization = z.infer<typeof OrganizationSchema>;
 export type Project = z.infer<typeof ProjectSchema>;
+export type TimePeriod = z.infer<typeof TimePeriodSchema>;

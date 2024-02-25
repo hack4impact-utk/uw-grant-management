@@ -3,44 +3,74 @@ import React, { useRef, useEffect, useState } from 'react';
 import '../../assets/css/map.css';
 import 'leaflet/dist/leaflet.css';
 import { MapContainer, TileLayer, GeoJSON } from 'react-leaflet';
-import { StyleFunction } from 'leaflet';
 
-import L, { LatLngTuple } from 'leaflet';
+import { Drawer } from '../Drawer';
+import Box from '@mui/material/Box';
+import L, { LatLngTuple, StyleFunction } from 'leaflet';
+import { Feature, Geometry } from 'geojson';
 import { geoJSONData } from '../../utils/constants/geoData';
-import { Feature as GeoJSONFeature, Geometry } from 'geojson';
-
-// import chroma from 'chroma-js';
-// import { NextApiRequest, NextApiResponse } from 'next';
+import { NumberValue, scaleQuantile } from 'd3-scale';
+import CircularProgress from '@mui/material/CircularProgress';
 
 // Defining the Map component
-function Map() {
+export default function Map() {
   const knoxvillePosition: LatLngTuple = [35.9606, -83.9207];
   const mapRef = useRef<L.Map | null>(null);
-
-  const getColor = (clientsServed: number) => {
-    const ratio = clientsServed / 100;
-    return `rgba(${255 * (1 - ratio)}, ${255 * ratio}, 0, 0.7)`;
-  };
-
+  const [drawerOpen, setDrawerOpen] = React.useState(false);
+  const [selectedZipCode, setSelectedZipCode] = React.useState('');
   const [zipCodeData, setZipCodedata] = useState<Record<string, number>>({});
+  const [isLoading, setIsLoading] = useState(true);
 
   const getZipCodeData = async () => {
+    setIsLoading(true);
     const response = await fetch('/api/zipcodes/');
     if (!response.ok) {
+      setIsLoading(false);
       return;
     }
     const data = await response.json();
     setZipCodedata(data.data);
+    setIsLoading(false);
   };
 
   useEffect(() => {
     getZipCodeData();
   }, []);
 
-  // Function definitions related to Leaflet and styling
+  // this function broke last minute
+
+  const clientsServedArray = Object.values(zipCodeData).map(Number);
+
+  const quantileScale = scaleQuantile()
+    .domain(clientsServedArray)
+    .range([0, 1, 2, 3, 4, 5]);
+
+  const colors = [
+    'rgba(255, 0, 0, 0.9)',
+    'rgba(245, 80, 0, 0.8)',
+    'rgba(235, 162, 0, 0.8)',
+    'rgba(208, 224, 0, 0.8)',
+    'rgba(150, 222, 57, 0.8)',
+    'rgba(35, 222, 67, 0.9)',
+  ];
+
+  // const colors = [
+  //   "rgba(255, 0, 0, 0.9)",
+  //   "rgba(245, 40, 0, 0.74)",
+  //   "rgba(225, 130, 0, 0.6)",
+  //   "rgba(130, 190, 15, 0.40)",
+  //   "rgba(120, 220, 40, 0.7)",
+  //   "rgba(0, 255, 0, 0.8)",
+  // ];
+
+  const getColor = (clientsServed: NumberValue) => {
+    const index = quantileScale(clientsServed);
+    return colors[index];
+  };
+
   const getStyle: StyleFunction<any> = (feature) => {
-    const clientsServed = zipCodeData[feature?.properties.ZCTA5CE10] || 0;
-    const fillColor = getColor(clientsServed);
+    const clientServed = zipCodeData[feature?.properties.ZCTA5CE10] || 0;
+    const fillColor = getColor(clientServed);
 
     return {
       fillColor,
@@ -50,47 +80,70 @@ function Map() {
     };
   };
 
-  const onEachFeature = (
-    feature: GeoJSONFeature<Geometry, any>,
-    layer: L.Layer
-  ) => {
-    if (layer instanceof L.Path) {
-      const zipCode = feature.properties.ZCTA5CE10;
-      const clientsServed = zipCodeData[zipCode];
-      const fillColor = getColor(clientsServed);
+  const onEachFeature = (feature: Feature<Geometry, any>, layer: L.Layer) => {
+    const zipCode = feature.properties.ZCTA5CE10;
 
-      layer.setStyle({
-        fillColor: fillColor,
-        color: '#333',
-        weight: 2,
-        fillOpacity: 0.5,
-      });
+    layer.bindPopup('Loading...');
+    layer.on(
+      'popupopen',
+      async (e: { popup: { setContent: (arg0: string) => void } }) => {
+        const clientsServed = zipCodeData[zipCode];
+        const popupContent = `Zip Code: ${zipCode}, Clients Served: ${clientsServed || 'No data'}`;
+        e.popup.setContent(popupContent);
+      }
+    );
 
-      const popupContent = `Zip Code: ${zipCode}, Clients Served: ${clientsServed || 'No data'}`;
-      layer.bindPopup(popupContent);
-    }
+    layer.on({
+      click: () => handleLayerClick(zipCode),
+    });
+  };
+
+  const handleLayerClick = (zipCode: string) => {
+    setSelectedZipCode(zipCode);
+    setDrawerOpen(true);
   };
 
   return (
     <div style={{ width: '100%', height: '100%' }}>
-      <MapContainer
-        center={knoxvillePosition}
-        zoom={10}
-        style={{ height: '100%' }}
-        ref={mapRef}
+      {isLoading ? (
+        <Box
+          sx={{
+            display: 'flex',
+            justifyContent: 'center',
+            alignItems: 'center',
+            height: '100%',
+            width: '100%',
+          }}
+        >
+          <CircularProgress size="4rem" />
+        </Box>
+      ) : (
+        <MapContainer
+          center={knoxvillePosition}
+          zoom={10}
+          style={{ height: '100%' }}
+          ref={mapRef}
+        >
+          <TileLayer
+            attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+            url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+          />
+          <GeoJSON
+            data={geoJSONData}
+            style={getStyle}
+            onEachFeature={onEachFeature}
+          />
+        </MapContainer>
+      )}
+      <Drawer
+        anchor="right"
+        open={drawerOpen}
+        onClose={() => setDrawerOpen(false)}
       >
-        <TileLayer
-          attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-          url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-        />
-        <GeoJSON
-          data={geoJSONData}
-          style={getStyle}
-          onEachFeature={onEachFeature}
-        />
-      </MapContainer>
+        <Box sx={{ width: 250 }} role="presentation">
+          <p>Zip Code: {selectedZipCode}</p>
+        </Box>
+      </Drawer>
     </div>
   );
 }
-
-export default Map;
