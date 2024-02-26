@@ -37,6 +37,8 @@ export default function Map() {
     getZipCodeData();
   }, []);
 
+  // This groups each zipcode based on their clients served and assigns
+  // the zipcode to a color
   const clientsServedArray = Object.values(zipCodeData).map(Number);
 
   const quantileScale = scaleQuantile()
