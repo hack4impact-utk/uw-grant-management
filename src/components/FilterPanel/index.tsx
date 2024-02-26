@@ -11,11 +11,23 @@ import Autocomplete from '@mui/material/Autocomplete';
 import { Drawer } from '../Drawer';
 import { ChangeEvent } from 'react';
 import { SelectChangeEvent } from '@mui/material/Select';
-import { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 
 interface FilterPanelProps {
   open: boolean;
   onClose: () => void;
+}
+interface Option {
+  _id: {
+      $oid: string;
+  };
+  name: string;
+  createdAt: {
+      $date: string;
+  };
+  updatedAt: {
+      $date: string;
+  };
 }
 
 const knoxCountyCities = [
@@ -39,9 +51,64 @@ const FilterPanel: React.FC<FilterPanelProps> = ({ open, onClose }) => {
     switch: false,
     text_field: 'Hello, World!',
     drop_down_field: undefined,
+    organizations_filters: [],
   });
 
-  const updateSearchObject = (key: string, val: boolean | string | number) => {
+  const [organizationSections, setOrganizationSections] = useState([]);
+
+  type AssistanceMetricOption = {
+    label: string;
+    value: string;
+  };
+
+  const [assistanceMetrics, setAssistanceMetrics] = useState<
+    AssistanceMetricOption[]
+  >([]);
+
+  const getAssistanceData = async () => {
+    try {
+      const response = await fetch('/api/assistance/');
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+      const data = await response.json();
+      const metricsData = data.numericFieldsSummary ?? {};
+
+      const newAssistanceMetrics = Object.keys(metricsData).map((key) => ({
+        label: key
+          .split(/(?=[A-Z])/)
+          .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
+          .join(' '),
+        value: key,
+      }));
+
+      setAssistanceMetrics(newAssistanceMetrics);
+    } catch (error) {
+      console.error('Failed to fetch assistance data:', error);
+    }
+  };
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const response = await fetch('/api/organizations');
+        if (!response.ok) {
+          throw new Error('Failed to fetch');
+        }
+        const data = await response.json();
+        setOrganizationSections(data);
+      } catch (error) {
+        console.error('Error fetching organization info:', error);
+      }
+    };
+    fetchData();
+  }, []);
+
+  useEffect(() => {
+    getAssistanceData();
+  }, []);
+
+  const updateSearchObject = (key: string, val: boolean | string | number | Array<object>) => {
     setSearchObject({
       ...searchObject,
       [key]: val,
@@ -63,18 +130,18 @@ const FilterPanel: React.FC<FilterPanelProps> = ({ open, onClose }) => {
   };
 
   return (
-  <Drawer
-    anchor="left"
-    open={open}
-    onClose={onClose}
-    style={{
-      zIndex: 998,
-    }}
-  >
-    <h2
+    <Drawer
+      anchor="left"
+      open={open}
+      onClose={onClose}
       style={{
-        padding: '12px',
+        zIndex: 998,
       }}
+    >
+      <h2
+        style={{
+          padding: '12px',
+        }}
       >
         Filters
       </h2>
@@ -129,11 +196,6 @@ const FilterPanel: React.FC<FilterPanelProps> = ({ open, onClose }) => {
           id="combo-box-demo"
           options={knoxCountyCities}
           sx={{ width: 300 }}
-          /* Here we use the second arguement by default to get the updated value from the dropdown.
-          * We give a name to it (any name). Aprt from this, we are using ternary operator below because
-          * newValue.value might return null or undefined in some case but in the updateSearchObject, we
-          * are allowing only (boolean | string | number).
-          */
           onChange={(any, newValue) => {
             updateSearchObject(
               'drop_down_field',
@@ -145,8 +207,47 @@ const FilterPanel: React.FC<FilterPanelProps> = ({ open, onClose }) => {
           )}
         />
       </div>
+      <div>
+        <Autocomplete
+          disablePortal
+          options={assistanceMetrics}
+          sx={{ width: 300, mt: 2 }}
+          onChange={(event, newValue) => {
+            updateSearchObject(
+              'metrics_field',
+              newValue?.value ? newValue.value : ''
+            );
+          }}
+          renderInput={(params) => (
+            <TextField {...params} label="Filter by Metrics" />
+          )}
+        />
+      </div>
+      <div>
+      <Autocomplete
+        multiple
+        id="tags-outlined"
+        options={organizationSections}
+        sx={{ width: 300, mt: 2 }}
+        onChange={(event, newValue) => {
+          updateSearchObject(
+            'organizations_filters',
+            newValue? newValue : []
+          );
+        }}
+        getOptionLabel={(option: Option) => option?.name}
+        filterSelectedOptions
+        renderInput={(params) => (
+          <TextField
+            {...params}
+            label="Filter By Organizations"
+            placeholder="Type Organization Name"
+          />
+        )}
+      />
+      </div>
     </Drawer>
   );
-}
+};
 
 export default FilterPanel;
