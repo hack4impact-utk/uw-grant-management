@@ -17,7 +17,7 @@ interface FilterPanelProps {
   open: boolean;
   onClose: () => void;
 }
-interface Option {
+interface OrganizationOption {
   _id: {
       $oid: string;
   };
@@ -87,7 +87,7 @@ const FilterPanel: React.FC<FilterPanelProps> = ({ open, onClose }) => {
       console.error('Failed to fetch assistance data:', error);
     }
   };
-
+/* Change the api endpoint. */
   useEffect(() => {
     const fetchData = async () => {
       try {
@@ -235,7 +235,7 @@ const FilterPanel: React.FC<FilterPanelProps> = ({ open, onClose }) => {
             newValue? newValue : []
           );
         }}
-        getOptionLabel={(option: Option) => option?.name}
+        getOptionLabel={(option: OrganizationOption) => option?.name}
         filterSelectedOptions
         renderInput={(params) => (
           <TextField
