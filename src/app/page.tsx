@@ -1,4 +1,4 @@
-"use client"
+'use client';
 import React, { useState } from 'react';
 import AppBar from '@mui/material/AppBar';
 import Toolbar from '@mui/material/Toolbar';
@@ -10,21 +10,10 @@ import FilterPanel from '@/components/FilterPanel';
 import Map from '../components/Map/index';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { useRequireAuth } from '@/utils/auth/auth-sign-in';
 
 export default function HomePage() {
-  /* 
-    For auth, check the session. If no session, redirect to sign in.
-    Redirecting here is needed in order to direct to a client side page that is capable of calling useRequireAuth() function.
-    Also check if auth is disabled in ENV.
-  */
   const [isFilterPanelOpen, setIsFilterPanelOpen] = useState(false);
   const pathname = usePathname();
-  const session = useRequireAuth();
-
-  if (!session && process.env.NEXT_PUBLIC_DISABLE_AUTH === 'false') {
-    return;
-  }
 
   const toggleFilterPanel = () => {
     setIsFilterPanelOpen(!isFilterPanelOpen);
@@ -37,7 +26,7 @@ export default function HomePage() {
   // const appBarHeight = '64px';
   return (
     <div style={{ display: 'flex', flexDirection: 'column', height: '100vh' }}>
-      <AppBar position="relative" style={{zIndex: 999}}>
+      <AppBar position="relative" style={{ zIndex: 999 }}>
         <Toolbar>
           <IconButton
             size="large"
@@ -57,7 +46,7 @@ export default function HomePage() {
           </Link>
         </Toolbar>
       </AppBar>
-      <FilterPanel open={isFilterPanelOpen} onClose={toggleFilterPanel}/>
+      <FilterPanel open={isFilterPanelOpen} onClose={toggleFilterPanel} />
       <Map />
     </div>
   );
