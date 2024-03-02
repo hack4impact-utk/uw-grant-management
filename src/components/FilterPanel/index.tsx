@@ -30,6 +30,15 @@ interface OrganizationOption {
   };
 }
 
+interface Report {
+  _id: {
+    $oid: string;
+  };
+  organizationId: {
+    $oid: string;
+  }
+}
+
 const knoxCountyCities = [
   { label: 'Knoxville', value: 'Knoxville' },
   { label: 'Farragut', value: 'Farragut' },
@@ -55,6 +64,7 @@ const FilterPanel: React.FC<FilterPanelProps> = ({ open, onClose }) => {
   });
 
   const [organizationSections, setOrganizationSections] = useState([]);
+  const [filteredReports, setFilteredReports] = useState([]);
 
   type AssistanceMetricOption = {
     label: string;
@@ -87,7 +97,32 @@ const FilterPanel: React.FC<FilterPanelProps> = ({ open, onClose }) => {
       console.error('Failed to fetch assistance data:', error);
     }
   };
-/* Change the api endpoint. */
+
+  /* Calls the report api to get data and
+   * filters it on the basis of 
+   * organizationId.
+   */ 
+  const getReportData = async () => {
+    try {
+      const response = await fetch('/api/filterReports/');
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+      const data = await response.json();
+      
+      if (searchObject?.organizations_filters && searchObject?.organizations_filters?.length != 0) {   
+        let newFilterData = []
+        const organizationIds = searchObject?.organizations_filters.map((org: OrganizationOption) => org._id);
+        if (data?.data && data?.data?.length != 0) {
+          newFilterData = data?.data?.filter((report: Report) => organizationIds.includes(report.organizationId) )
+        }
+        setFilteredReports(newFilterData); 
+      }
+    } catch (error) {
+      console.error('Failed to fetch assistance data:', error);
+    }
+  };
+
   useEffect(() => {
     const fetchData = async () => {
       try {
@@ -107,6 +142,17 @@ const FilterPanel: React.FC<FilterPanelProps> = ({ open, onClose }) => {
   useEffect(() => {
     getAssistanceData();
   }, []);
+
+  console.log(filteredReports);
+
+  /* 
+   * getReportData gets called whenever 
+   * the searchObject.organizations_filters 
+   * gets updated.
+   */
+  useEffect(() => {
+    getReportData();
+  }, [searchObject.organizations_filters]);
 
   const updateSearchObject = (key: string, val: boolean | string | number | Array<object>) => {
     setSearchObject({
@@ -229,6 +275,7 @@ const FilterPanel: React.FC<FilterPanelProps> = ({ open, onClose }) => {
         id="tags-outlined"
         options={organizationSections}
         sx={{ width: 300, mt: 2 }}
+        /* Might need to change this. */
         onChange={(event, newValue) => {
           updateSearchObject(
             'organizations_filters',
