@@ -79,8 +79,11 @@ function Map() {
       {hoveredRegion && (
         <Card style={{ position: 'absolute', top: 84, right: 20, zIndex: 400 }}>
           <CardContent>
-            <h2>{hoveredRegion}</h2>
-            {/* Add additional content as needed */}
+            <h2>Zip Code: {hoveredRegion}</h2>
+            <br />
+            <p>Total Clients Served: {}</p>
+            <p>Total Projects: {}</p>
+            <p>Total Amount Awarded: {}</p>
           </CardContent>
         </Card>
       )}
