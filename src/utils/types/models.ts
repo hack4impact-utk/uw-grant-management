@@ -1,29 +1,27 @@
 import { z } from 'zod';
 import {
-  months,
   zipCodes,
+  locations,
   unitedWayFocusAreas,
   focusAreaIndicators,
 } from '../constants';
 
-// Assuming months and zipCodes are arrays of string literals
-const monthsEnum = z.enum(months);
-
-// Assuming months and zipCodes are arrays of string literals
+// const monthsEnum = z.enum(months);
 const zipCodesEnum = z.enum(zipCodes);
-
+const locationsEnum = z.enum(locations);
 const focusAreasEnum = z.enum(unitedWayFocusAreas);
 
 const focusAreasIndicatorsEnum = z.enum(focusAreaIndicators);
 
-const TimePeriodSchema = z.object({
-  month: monthsEnum,
+export const TimePeriodSchema = z.object({
+  month: z.string(),
   year: z.string(),
 });
 
 const ZipCodeClientsServedSchema = z.object({
   zipCode: zipCodesEnum,
   clientsServed: z.number(),
+  location: locationsEnum,
 });
 
 const ClientsSexSchema = z.object({
@@ -40,7 +38,6 @@ const ClientsRaceSchema = z.object({
   americanIndianAlaskan: z.number(),
   nativeHawaiianPacificIslander: z.number(),
   twoOrMoreRaces: z.number(),
-  other: z.number(),
   unknown: z.number(),
 });
 
@@ -85,16 +82,18 @@ const IndicatorSchema = z.object({
   successfulClientsServied: z.number(),
 });
 
-const SixMonthReportSchema = z.object({
+const ReportSchema = z.object({
   periodStart: TimePeriodSchema,
   periodEnd: TimePeriodSchema,
-  nonProfit: z.string(), // Assuming ObjectId is represented as string in Zod
+  organizationId: z.string(), // Assuming ObjectId is represented as string in Zod
+  projectId: z.string(),
   clientsServed: z.number(),
+  amountAwarded: z.number(),
   jobsCreated: z.number(),
   partners: z.number(),
   foodAssistance: z.number(),
   foodKnowledgeAndSkills: z.number(),
-  accessToHealthFoods: z.number(),
+  accessToHealthyFoods: z.number(),
   producerSupport: z.number(),
   clothingAssistance: z.number(),
   hygieneAssistance: z.number(),
@@ -120,7 +119,7 @@ const SixMonthReportSchema = z.object({
 const TwelveMonthReportSchema = z.object({
   periodStart: TimePeriodSchema,
   periodEnd: TimePeriodSchema,
-  nonProfit: z.string(), // Assuming ObjectId is represented as string in Zod
+  organizationId: z.string(), // Assuming ObjectId is represented as string in Zod
   clientsServed: z.number(),
   indicators: z.array(IndicatorSchema),
   reportedDemographics: z.array(demographicsEnum),
@@ -132,5 +131,17 @@ const TwelveMonthReportSchema = z.object({
   clientsServedByAge: ClientAgeSchema,
 });
 
-export type SixMonthReport = z.infer<typeof SixMonthReportSchema>;
+const OrganizationSchema = z.object({
+  name: z.string(),
+});
+
+const ProjectSchema = z.object({
+  organizationId: z.string(),
+  name: z.string(),
+});
+
+export type Report = z.infer<typeof ReportSchema>;
 export type TwelveMonthReport = z.infer<typeof TwelveMonthReportSchema>;
+export type Organization = z.infer<typeof OrganizationSchema>;
+export type Project = z.infer<typeof ProjectSchema>;
+export type TimePeriod = z.infer<typeof TimePeriodSchema>;

@@ -1,3 +1,12 @@
+export const locations = [
+  'Knoxville',
+  'Corryton',
+  'Farragut',
+  'Heiskell',
+  'Powell',
+  'Mascot',
+] as const;
+
 export const zipCodes = [
   '37721',
   '37934',

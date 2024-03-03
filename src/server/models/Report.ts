@@ -1,6 +1,6 @@
 import { Model, Document, Schema, model, models } from 'mongoose';
-import { SixMonthReport } from '@/utils/types/models';
-import { zipCodes, months } from '@/utils/constants';
+import { Report } from '@/utils/types/models';
+import { zipCodes, months, locations } from '@/utils/constants';
 
 const TimePeriodSchema = new Schema(
   {
@@ -21,6 +21,11 @@ const TimePeriodSchema = new Schema(
 
 const ZipCodeClientsServedSchema = new Schema(
   {
+    location: {
+      type: String,
+      required: true,
+      enum: locations,
+    },
     zipCode: {
       type: String,
       required: true,
@@ -82,10 +87,6 @@ const ClientsRaceSchema = new Schema(
       required: true,
     },
     twoOrMoreRaces: {
-      type: Number,
-      required: true,
-    },
-    other: {
       type: Number,
       required: true,
     },
@@ -179,14 +180,24 @@ const ClientAgeSchema = new Schema(
   }
 );
 
-const SixMonthReportSchema = new Schema(
+const ReportSchema = new Schema(
   {
+    organizationId: {
+      type: Schema.Types.ObjectId,
+      ref: 'Organization',
+      required: true,
+    },
+    projectId: {
+      type: Schema.Types.ObjectId,
+      ref: 'Project',
+      required: true,
+    },
     periodStart: TimePeriodSchema,
     periodEnd: TimePeriodSchema,
-    nonProfit: {
-      type: Schema.Types.ObjectId,
-      ref: 'NonProfit',
-      required: true,
+
+    amountAwarded: {
+      type: Number,
+      required: false,
     },
     clientsServed: {
       type: Number,
@@ -217,7 +228,7 @@ const SixMonthReportSchema = new Schema(
       required: true,
     },
     // Number of individuals with increased access to health foods
-    accessToHealthFoods: {
+    accessToHealthyFoods: {
       type: Number,
       required: true,
     },
@@ -242,7 +253,7 @@ const SixMonthReportSchema = new Schema(
      *        HYGIENE         *
      ***************************/
 
-    // Nu,ber of individuals provided hygiene assistance
+    // Number of individuals provided hygiene assistance
     hygieneAssistance: {
       type: Number,
       required: true,
@@ -365,23 +376,7 @@ const SixMonthReportSchema = new Schema(
   }
 );
 
-SixMonthReportSchema.virtual('projects', {
-  ref: 'ProjectMember',
-  localField: '_id',
-  foreignField: 'memberId',
-});
+export interface ReportDocument extends Omit<Report, '_id'>, Document {}
 
-SixMonthReportSchema.virtual('activeProject', {
-  ref: 'ProjectMember',
-  localField: '_id',
-  foreignField: 'memberId',
-  justOne: true,
-  match: { active: true },
-});
-
-export interface SixMonthReportDocument
-  extends Omit<SixMonthReport, '_id'>,
-    Document {}
-
-export default (models.Member as Model<SixMonthReportDocument>) ||
-  model<SixMonthReportDocument>('SixMonthReport', SixMonthReportSchema);
+export default (models.Report as Model<ReportDocument>) ||
+  model<ReportDocument>('Report', ReportSchema);

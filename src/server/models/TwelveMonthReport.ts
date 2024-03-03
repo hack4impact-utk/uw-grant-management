@@ -223,9 +223,9 @@ const TwelveMonthReportSchema = new Schema(
   {
     periodStart: TimePeriodSchema,
     periodEnd: TimePeriodSchema,
-    nonProfit: {
+    organizationId: {
       type: Schema.Types.ObjectId,
-      ref: 'NonProfit',
+      ref: 'Organization',
       required: true,
     },
 

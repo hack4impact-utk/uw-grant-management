@@ -1,7 +1,8 @@
 import mongoose from 'mongoose';
+import dotenv from 'dotenv';
+dotenv.config();
 
 const MONGODB_URI = process.env.MONGODB_URI;
-console.log(process.env.MONGODB_URI);
 
 if (!MONGODB_URI) {
   throw new Error(
@@ -25,31 +26,29 @@ if (!cached) {
  * @returns {Promise<mongoose.Mongoose>}
  */
 async function dbConnect(): Promise<mongoose.Mongoose> {
-  // return cached connection if available
   if (cached.conn) {
     return cached.conn;
   }
 
-  // open new connection if we are not currently waiting on a promise
   if (!cached.promise) {
     const opts: mongoose.ConnectOptions = {
       bufferCommands: false,
     };
 
-    // set the promise so that other requests can wait on it
+    // cached.promise = mongoose.connect(MONGODB_URI, opts).then((mongoose) => {
+    //   return mongoose
+    // })
+
     cached.promise = mongoose.connect(MONGODB_URI, opts);
   }
 
   try {
-    // wait for promise to resolve
     cached.conn = await cached.promise;
   } catch (e) {
-    // set promise to null so next attempt to connect will retry
     cached.promise = null;
     throw e;
   }
 
-  // return connection
   return cached.conn;
 }
 
