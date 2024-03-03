@@ -83,7 +83,6 @@ function Map() {
             <br />
             <p>Total Clients Served: {}</p>
             <p>Total Projects: {}</p>
-            <p>Total Amount Awarded: {}</p>
           </CardContent>
         </Card>
       )}
