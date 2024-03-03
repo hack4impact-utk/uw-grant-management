@@ -1,12 +1,13 @@
 import { NextResponse } from 'next/server';
 import dbConnect from '@/utils/db-connect';
 import Report from '@/server/models/Report';
+
 export async function GET() {
   await dbConnect();
 
   try {
     // Initialize an object to hold the sum of each selected numeric field
-    const metricsSummary: { [key: string]: number } = {
+    const metricsOptions: { [key: string]: number } = {
       amountAwarded: 0,
       clientsServed: 0,
       jobsCreated: 0,
@@ -32,10 +33,10 @@ export async function GET() {
     const reports = await Report.find({});
 
     reports.forEach((report) => {
-      Object.keys(metricsSummary).forEach((field) => {
+      Object.keys(metricsOptions).forEach((field) => {
         const value = report.get(field);
         if (typeof value === 'number') {
-          metricsSummary[field] += value;
+          metricsOptions[field] += value;
         }
       });
     });
@@ -43,7 +44,7 @@ export async function GET() {
     return NextResponse.json(
       {
         success: true,
-        metricsSummary,
+        metricsOptions,
       },
       { status: 200 }
     );

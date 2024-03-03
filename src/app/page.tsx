@@ -1,4 +1,4 @@
-"use client"
+'use client';
 import React, { useState } from 'react';
 import AppBar from '@mui/material/AppBar';
 import Toolbar from '@mui/material/Toolbar';
@@ -11,8 +11,14 @@ import Map from '../components/Map/index';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 
+interface AssistanceMetricOption {
+  label: string;
+  value: string;
+}
+
 export default function Page() {
   const [isFilterPanelOpen, setIsFilterPanelOpen] = useState(false);
+  // const [searchObject, setSearchObject] = useState();
 
   const toggleFilterPanel = () => {
     setIsFilterPanelOpen(!isFilterPanelOpen);
@@ -24,9 +30,17 @@ export default function Page() {
     color: route === pathname ? 'orange' : 'white',
   });
 
+  const [selectedMetrics, setSelectedMetrics] = useState<
+    AssistanceMetricOption[]
+  >([]);
+
+  const handleMetricsChange = (metrics: AssistanceMetricOption[]) => {
+    setSelectedMetrics(metrics);
+  };
+
   return (
     <div style={{ display: 'flex', flexDirection: 'column', height: '100vh' }}>
-      <AppBar position="relative" style={{zIndex: 999}}>
+      <AppBar position="relative" style={{ zIndex: 999 }}>
         <Toolbar>
           <IconButton
             size="large"
@@ -46,8 +60,12 @@ export default function Page() {
           </Link>
         </Toolbar>
       </AppBar>
-      <FilterPanel open={isFilterPanelOpen} onClose={toggleFilterPanel}/>
-      <Map />
+      <FilterPanel
+        open={isFilterPanelOpen}
+        onClose={toggleFilterPanel}
+        onMetricsChange={handleMetricsChange}
+      />
+      <Map selectedMetrics={selectedMetrics} />
     </div>
   );
 }

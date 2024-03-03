@@ -1,21 +1,17 @@
 'use client';
-import Checkbox from '@mui/material/Checkbox';
-import Radio from '@mui/material/Radio';
-import RadioGroup from '@mui/material/RadioGroup';
-import FormControlLabel from '@mui/material/FormControlLabel';
-import Select from '@mui/material/Select';
-import MenuItem from '@mui/material/MenuItem';
-import Switch from '@mui/material/Switch';
 import TextField from '@mui/material/TextField';
 import Autocomplete from '@mui/material/Autocomplete';
 import { Drawer } from '../Drawer';
-import { ChangeEvent } from 'react';
-import { SelectChangeEvent } from '@mui/material/Select';
 import React, { useEffect, useState } from 'react';
 
+interface AssistanceMetricOption {
+  label: string;
+  value: string;
+}
 interface FilterPanelProps {
   open: boolean;
   onClose: () => void;
+  onMetricsChange: (selectedMetrics: AssistanceMetricOption[]) => void;
 }
 
 const knoxCountyCities = [
@@ -31,7 +27,11 @@ const knoxCountyCities = [
   { label: 'Carter', value: 'Carter' },
 ];
 
-const FilterPanel: React.FC<FilterPanelProps> = ({ open, onClose }) => {
+const FilterPanel: React.FC<FilterPanelProps> = ({
+  open,
+  onClose,
+  onMetricsChange,
+}) => {
   const [searchObject, setSearchObject] = useState({
     checkbox: false,
     radio: 'female',
@@ -46,40 +46,72 @@ const FilterPanel: React.FC<FilterPanelProps> = ({ open, onClose }) => {
     value: string;
   };
 
-  const [metricValues, setMetricValues] = useState<AssistanceMetricOption[]>(
-    []
-  );
+  // type MetricTotals = {
+  //   [key: string]: number;
+  // };
 
-  const [assistanceMetrics, setAssistanceMetrics] = useState<
+  // interface MetricOption {
+  //   label: string;
+  //   value: string;
+  // }
+
+  const camelCaseToTitleCase = (camelCase: string) => {
+    if (camelCase === '') return camelCase;
+
+    return camelCase
+      .replace(/([A-Z])/g, ' $1')
+      .replace(/^./, (str: string) => str.toUpperCase())
+      .trim();
+  };
+
+  // const [filters, setFilters] = useState({
+  //   organizations: [],
+  //   metrics: [],
+  // });
+
+  // const [reportsData, setReportsData] = useState([]);
+  // const [isLoading, setIsLoading] = useState(false);
+
+  const [metricsOptions, setMetricsOptions] = useState<
+    AssistanceMetricOption[]
+  >([]);
+  const [selectedMetrics, setSelectedMetrics] = useState<
     AssistanceMetricOption[]
   >([]);
 
-  const getAssistanceData = async () => {
+  console.log('Selected Metrics for API call:', selectedMetrics);
+  const metricsQuery = selectedMetrics.map((metric) => metric.value).join(',');
+  console.log(`Fetching data for metrics: ${metricsQuery}`);
+
+  const getReportsData = async () => {
+    //setIsLoading(true);
     try {
       const response = await fetch('/api/metrics/');
       if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`);
+        throw new Error('Failed to fetch metrics data');
       }
       const data = await response.json();
-      const metricsData = data.metricsSummary ?? {};
 
-      const newAssistanceMetrics = Object.keys(metricsData).map((key) => ({
-        label: key
-          .split(/(?=[A-Z])/)
-          .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
-          .join(' '),
+      const metricsArray = Object.keys(data.metricsOptions).map((key) => ({
+        label: camelCaseToTitleCase(key),
         value: key,
       }));
 
-      setAssistanceMetrics(newAssistanceMetrics);
+      setMetricsOptions(metricsArray);
     } catch (error) {
-      console.error('Failed to fetch assistance data:', error);
+      console.error('Error fetching metrics data:', error);
+    } finally {
+      //setIsLoading(false);
     }
   };
 
   useEffect(() => {
-    getAssistanceData();
+    getReportsData();
   }, []);
+
+  useEffect(() => {
+    onMetricsChange(selectedMetrics);
+  }, [selectedMetrics]);
 
   const updateSearchObject = (key: string, val: boolean | string | number) => {
     setSearchObject({
@@ -88,19 +120,45 @@ const FilterPanel: React.FC<FilterPanelProps> = ({ open, onClose }) => {
     });
   };
 
-  const handleSwitchOrCheckboxChange = (
-    event: ChangeEvent<HTMLInputElement>
-  ) => {
-    updateSearchObject(event.target.name, event.target.checked);
-  };
+  // const handleSwitchOrCheckboxChange = (
+  //   event: ChangeEvent<HTMLInputElement>
+  // ) => {
+  //   updateSearchObject(event.target.name, event.target.checked);
+  // };
 
-  const handleGeneralInputChange = (
-    event:
-      | ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
-      | SelectChangeEvent<number>
-  ) => {
-    updateSearchObject(event.target.name, event.target.value);
-  };
+  // const handleGeneralInputChange = (
+  //   event:
+  //     | ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+  //     | SelectChangeEvent<number>
+  // ) => {
+  //   updateSearchObject(event.target.name, event.target.value);
+  // };
+
+  // const fetchDataWithFilters = async () => {
+  //   const queryParams = new URLSearchParams();
+
+  //   if (filters.organizations.length) {
+  //     queryParams.append('organizations', filters.organizations.join(','));
+  //   }
+
+  //   if (filters.metrics.length) {
+  //     queryParams.append('metrics', filters.metrics.join(','));
+  //   }
+
+  //   try {
+  //     const response = await fetch(`/api/zipcodes?metrics=${encodeURIComponent(metricsQuery)}`);
+
+  //     const data = await response.json();
+  //   } catch (error) {
+  //     console.error('Error fetching data with filters:', error);
+  //   }
+  // };
+
+  //   useEffect(() => {
+  //     if (selectedMetrics.length > 0) {
+  //         fetchDataWithFilters();
+  //     }
+  // }, [selectedMetrics]);
 
   return (
     <Drawer
@@ -118,51 +176,6 @@ const FilterPanel: React.FC<FilterPanelProps> = ({ open, onClose }) => {
       >
         Filters
       </h2>
-      <div>
-        <Checkbox
-          checked={searchObject.checkbox}
-          name={'checkbox'}
-          onChange={handleSwitchOrCheckboxChange}
-        />
-      </div>
-      <div>
-        <RadioGroup
-          value={searchObject.radio}
-          name="radio"
-          onChange={handleGeneralInputChange}
-        >
-          <FormControlLabel value="female" control={<Radio />} label="Female" />
-          <FormControlLabel value="male" control={<Radio />} label="Male" />
-          <FormControlLabel value="other" control={<Radio />} label="Other" />
-        </RadioGroup>
-      </div>
-      <div>
-        <Select
-          value={searchObject.select}
-          label="Select"
-          onChange={handleGeneralInputChange}
-          name="select"
-        >
-          <MenuItem value={10}>Ten</MenuItem>
-          <MenuItem value={20}>Twenty</MenuItem>
-          <MenuItem value={30}>Thirty</MenuItem>
-        </Select>
-      </div>
-      <div>
-        <Switch
-          name="switch"
-          checked={searchObject.switch}
-          onChange={handleSwitchOrCheckboxChange}
-        />
-      </div>
-      <div>
-        <TextField
-          name="text_field"
-          value={searchObject.text_field}
-          onChange={handleGeneralInputChange}
-        />
-      </div>
-      <br />
       <div>
         <Autocomplete
           disablePortal
@@ -183,15 +196,12 @@ const FilterPanel: React.FC<FilterPanelProps> = ({ open, onClose }) => {
       <div>
         <Autocomplete
           multiple
-          value={metricValues}
+          value={selectedMetrics}
           onChange={(event, newValue) => {
-            setMetricValues(newValue);
-            const concatenatedValues = newValue
-              .map((option) => option.value)
-              .join(',');
-            updateSearchObject('metrics_field', concatenatedValues);
+            setSelectedMetrics(newValue);
           }}
-          options={assistanceMetrics}
+          options={metricsOptions}
+          getOptionLabel={(option) => option.label}
           sx={{ width: 300, mt: 2 }}
           renderInput={(params) => (
             <TextField {...params} label="Filter by Metrics" />
