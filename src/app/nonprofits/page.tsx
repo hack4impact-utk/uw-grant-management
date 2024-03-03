@@ -1,29 +1,29 @@
 'use client';
-import React, { useEffect, useState } from 'react';
-import AccordionElement from '@/components/AccordionElement';
+import { useEffect, useState } from 'react';
+import OrganizationAccordion from '@/components/OrganizationAccordion';
+import { OrganizationDocument as OrganizationType } from '@/server/models/Organization';
 
 function Nonprofits() {
-  const [organizationSections, setOrganizationSections] = useState([]);
+  const [organizations, setOrganizations] = useState<OrganizationType[]>([]);
 
   useEffect(() => {
     const fetchData = async () => {
-      try {
-        const response = await fetch('/api/organizations');
-        if (!response.ok) {
-          throw new Error('Failed to fetch');
-        }
-        const data = await response.json();
-        setOrganizationSections(data);
-      } catch (error) {
-        console.error('Error fetching organization info:', error);
+      const response = await fetch('/api/organizations');
+      if (!response.ok) {
+        throw new Error('Failed to fetch');
       }
+      const data = await response.json();
+      setOrganizations(data);
     };
+
     fetchData();
   }, []);
 
   return (
     <div>
-      <AccordionElement organizationInfo={organizationSections} />
+      {organizations.map((org) => (
+        <OrganizationAccordion key={org.id} organization={org} />
+      ))}
     </div>
   );
 }
