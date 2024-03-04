@@ -1,60 +1,29 @@
 'use client';
-import TextField from '@mui/material/TextField';
-import Autocomplete from '@mui/material/Autocomplete';
 import { Drawer } from '../Drawer';
 import React, { useEffect, useState } from 'react';
+import {
+  FilterPanelAutocomplete,
+  AutocompleteOption,
+} from './FilterPanelAutocomplete';
 
-interface AssistanceMetricOption {
-  label: string;
-  value: string;
-}
 interface FilterPanelProps {
   open: boolean;
   onClose: () => void;
-  onMetricsChange: (selectedMetrics: AssistanceMetricOption[]) => void;
+  setSearchObject: React.Dispatch<React.SetStateAction<Record<string, any>>>;
+  searchObject: Record<string, any>;
 }
 
-const knoxCountyCities = [
-  { label: 'Knoxville', value: 'Knoxville' },
-  { label: 'Farragut', value: 'Farragut' },
-  { label: 'Concord', value: 'Concord' },
-  { label: 'Powell', value: 'Powell' },
-  { label: 'Mascot', value: 'Mascot' },
-  { label: 'Halls Crossroads', value: 'Halls Crossroads' },
-  { label: 'Cedar Bluff', value: 'Cedar Bluff' },
-  { label: 'Strawberry Plains', value: 'Strawberry Plains' },
-  { label: 'Corryton', value: 'Corryton' },
-  { label: 'Carter', value: 'Carter' },
-];
+interface OrganizationRow {
+  id: string;
+  name: string;
+}
 
 const FilterPanel: React.FC<FilterPanelProps> = ({
   open,
   onClose,
-  onMetricsChange,
+  setSearchObject,
+  searchObject,
 }) => {
-  const [searchObject, setSearchObject] = useState({
-    checkbox: false,
-    radio: 'female',
-    select: 10,
-    switch: false,
-    text_field: 'Hello, World!',
-    drop_down_field: undefined,
-  });
-
-  type AssistanceMetricOption = {
-    label: string;
-    value: string;
-  };
-
-  // type MetricTotals = {
-  //   [key: string]: number;
-  // };
-
-  // interface MetricOption {
-  //   label: string;
-  //   value: string;
-  // }
-
   const camelCaseToTitleCase = (camelCase: string) => {
     if (camelCase === '') return camelCase;
 
@@ -64,101 +33,70 @@ const FilterPanel: React.FC<FilterPanelProps> = ({
       .trim();
   };
 
-  // const [filters, setFilters] = useState({
-  //   organizations: [],
-  //   metrics: [],
-  // });
+  const [selectedFilters, setSelectedFilters] = useState<
+    Record<string, Array<AutocompleteOption>>
+  >({
+    organizations: [],
+    metrics: [],
+  });
 
-  // const [reportsData, setReportsData] = useState([]);
-  // const [isLoading, setIsLoading] = useState(false);
+  const [metricsOptions, setMetricsOptions] = useState<AutocompleteOption[]>(
+    []
+  );
 
-  const [metricsOptions, setMetricsOptions] = useState<
-    AssistanceMetricOption[]
+  const [organizationsOptions, setOrganizationsOptions] = useState<
+    AutocompleteOption[]
   >([]);
-  const [selectedMetrics, setSelectedMetrics] = useState<
-    AssistanceMetricOption[]
-  >([]);
 
-  console.log('Selected Metrics for API call:', selectedMetrics);
-  const metricsQuery = selectedMetrics.map((metric) => metric.value).join(',');
-  console.log(`Fetching data for metrics: ${metricsQuery}`);
-
-  const getReportsData = async () => {
-    //setIsLoading(true);
-    try {
-      const response = await fetch('/api/metrics/');
-      if (!response.ok) {
-        throw new Error('Failed to fetch metrics data');
-      }
-      const data = await response.json();
-
-      const metricsArray = Object.keys(data.metricsOptions).map((key) => ({
+  const getMetrics = async () => {
+    const response = await fetch('/api/metrics/');
+    if (!response.ok) {
+      throw new Error('Failed to fetch metrics data');
+    }
+    const data = await response.json();
+    setMetricsOptions(
+      data.metrics.map((key: string) => ({
         label: camelCaseToTitleCase(key),
         value: key,
-      }));
-
-      setMetricsOptions(metricsArray);
-    } catch (error) {
-      console.error('Error fetching metrics data:', error);
-    } finally {
-      //setIsLoading(false);
-    }
+      }))
+    );
   };
 
-  useEffect(() => {
-    getReportsData();
-  }, []);
+  const getOrganizations = async () => {
+    const response = await fetch('/api/organizations/');
+    if (!response.ok) {
+      throw new Error('Failed to fetch metrics data');
+    }
+    const data = await response.json();
+    setOrganizationsOptions(
+      data.map((org: OrganizationRow) => {
+        return {
+          label: org.name,
+          value: org.id,
+        };
+      })
+    );
+  };
 
-  useEffect(() => {
-    onMetricsChange(selectedMetrics);
-  }, [selectedMetrics]);
-
-  const updateSearchObject = (key: string, val: boolean | string | number) => {
+  const handleAutoCompleteChange = (
+    targetName: string,
+    values: AutocompleteOption[]
+  ) => {
     setSearchObject({
       ...searchObject,
-      [key]: val,
+      [targetName]: values.map((value) => value.value),
+    });
+
+    setSelectedFilters({
+      ...selectedFilters,
+      [targetName]: values,
     });
   };
 
-  // const handleSwitchOrCheckboxChange = (
-  //   event: ChangeEvent<HTMLInputElement>
-  // ) => {
-  //   updateSearchObject(event.target.name, event.target.checked);
-  // };
-
-  // const handleGeneralInputChange = (
-  //   event:
-  //     | ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
-  //     | SelectChangeEvent<number>
-  // ) => {
-  //   updateSearchObject(event.target.name, event.target.value);
-  // };
-
-  // const fetchDataWithFilters = async () => {
-  //   const queryParams = new URLSearchParams();
-
-  //   if (filters.organizations.length) {
-  //     queryParams.append('organizations', filters.organizations.join(','));
-  //   }
-
-  //   if (filters.metrics.length) {
-  //     queryParams.append('metrics', filters.metrics.join(','));
-  //   }
-
-  //   try {
-  //     const response = await fetch(`/api/zipcodes?metrics=${encodeURIComponent(metricsQuery)}`);
-
-  //     const data = await response.json();
-  //   } catch (error) {
-  //     console.error('Error fetching data with filters:', error);
-  //   }
-  // };
-
-  //   useEffect(() => {
-  //     if (selectedMetrics.length > 0) {
-  //         fetchDataWithFilters();
-  //     }
-  // }, [selectedMetrics]);
+  useEffect(() => {
+    getMetrics();
+    getOrganizations();
+  }, []);
 
   return (
     <Drawer
@@ -177,35 +115,21 @@ const FilterPanel: React.FC<FilterPanelProps> = ({
         Filters
       </h2>
       <div>
-        <Autocomplete
-          disablePortal
-          id="combo-box-demo"
-          options={knoxCountyCities}
-          sx={{ width: 300 }}
-          onChange={(any, newValue) => {
-            updateSearchObject(
-              'drop_down_field',
-              newValue?.value ? newValue.value : ''
-            );
-          }}
-          renderInput={(params) => (
-            <TextField {...params} label="Locations in Knox County" />
-          )}
+        <FilterPanelAutocomplete
+          name="organizations"
+          label="Select organizations"
+          value={selectedFilters.organizations}
+          handleAutocompleteChange={handleAutoCompleteChange}
+          options={organizationsOptions}
         />
       </div>
       <div>
-        <Autocomplete
-          multiple
-          value={selectedMetrics}
-          onChange={(event, newValue) => {
-            setSelectedMetrics(newValue);
-          }}
+        <FilterPanelAutocomplete
+          name="metrics"
+          label="Select metrics"
+          value={selectedFilters.metrics}
+          handleAutocompleteChange={handleAutoCompleteChange}
           options={metricsOptions}
-          getOptionLabel={(option) => option.label}
-          sx={{ width: 300, mt: 2 }}
-          renderInput={(params) => (
-            <TextField {...params} label="Filter by Metrics" />
-          )}
         />
       </div>
     </Drawer>

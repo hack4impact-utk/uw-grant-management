@@ -3,7 +3,6 @@ import React, { useRef, useEffect, useState } from 'react';
 import '../../assets/css/map.css';
 import 'leaflet/dist/leaflet.css';
 import { MapContainer, TileLayer, GeoJSON } from 'react-leaflet';
-
 import { Drawer } from '../Drawer';
 import Box from '@mui/material/Box';
 import L, { LatLngTuple, StyleFunction } from 'leaflet';
@@ -12,18 +11,12 @@ import { geoJSONData } from '../../utils/constants/geoData';
 import { NumberValue, scaleQuantile } from 'd3-scale';
 import CircularProgress from '@mui/material/CircularProgress';
 
-interface AssistanceMetricOption {
-  label: string;
-  value: string;
-}
-
 interface MapProps {
-  selectedMetrics: AssistanceMetricOption[];
+  searchObject: Record<string, any>;
 }
 
 // Defining the Map component
-//export default function Map({ searchObject }) {
-export default function Map({ selectedMetrics }: MapProps) {
+export default function Map({ searchObject }: MapProps) {
   const knoxvillePosition: LatLngTuple = [35.9606, -83.9207];
   const mapRef = useRef<L.Map | null>(null);
   const [drawerOpen, setDrawerOpen] = React.useState(false);
@@ -33,44 +26,25 @@ export default function Map({ selectedMetrics }: MapProps) {
 
   const getZipCodeData = async () => {
     setIsLoading(true);
-    const response = await fetch('/api/zipcodes/');
-    if (!response.ok) {
-      setIsLoading(false);
-      return;
-    }
-    const data = await response.json();
-    setZipCodedata(data.data);
-    setIsLoading(false);
+    fetch(`/api/zipcodes/?${new URLSearchParams(searchObject).toString()}`)
+      .then(async (response) => {
+        if (!response.ok) {
+          setIsLoading(false);
+          return;
+        }
+        const data = await response.json();
+        setZipCodedata(data.data);
+        setIsLoading(false);
+      })
+      .catch((err) => {
+        console.log(`Error fetching zip codes: ${err}`);
+        setIsLoading(false);
+      });
   };
 
   useEffect(() => {
-    const fetchFilteredZipCodeData = async () => {
-      setIsLoading(true);
-      const metricsQuery = selectedMetrics
-        .map((metric) => metric.value)
-        .join(',');
-      console.log(selectedMetrics);
-      const response = await fetch(
-        `/api/zipcodes/?metrics=${encodeURIComponent(metricsQuery)}`
-      );
-
-      if (!response.ok) {
-        console.error('Failed to fetch filtered zip code data');
-        setIsLoading(false);
-        return;
-      }
-      const data = await response.json();
-      console.log(data);
-      setZipCodedata(data.data);
-      setIsLoading(false);
-    };
-
-    if (selectedMetrics.length > 0) {
-      fetchFilteredZipCodeData();
-    } else {
-      getZipCodeData();
-    }
-  }, [selectedMetrics]);
+    getZipCodeData();
+  }, [searchObject]);
 
   const clientsServedArray = Object.values(zipCodeData).map(Number);
 

@@ -11,14 +11,12 @@ import Map from '../components/Map/index';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 
-interface AssistanceMetricOption {
-  label: string;
-  value: string;
-}
-
 export default function Page() {
   const [isFilterPanelOpen, setIsFilterPanelOpen] = useState(false);
-  // const [searchObject, setSearchObject] = useState();
+  const [searchObject, setSearchObject] = useState<Record<string, any>>({
+    organizations: [],
+    metrics: [],
+  });
 
   const toggleFilterPanel = () => {
     setIsFilterPanelOpen(!isFilterPanelOpen);
@@ -29,14 +27,6 @@ export default function Page() {
   const buttonColor = (route: string) => ({
     color: route === pathname ? 'orange' : 'white',
   });
-
-  const [selectedMetrics, setSelectedMetrics] = useState<
-    AssistanceMetricOption[]
-  >([]);
-
-  const handleMetricsChange = (metrics: AssistanceMetricOption[]) => {
-    setSelectedMetrics(metrics);
-  };
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column', height: '100vh' }}>
@@ -63,9 +53,10 @@ export default function Page() {
       <FilterPanel
         open={isFilterPanelOpen}
         onClose={toggleFilterPanel}
-        onMetricsChange={handleMetricsChange}
+        searchObject={searchObject}
+        setSearchObject={setSearchObject}
       />
-      <Map selectedMetrics={selectedMetrics} />
+      <Map searchObject={searchObject} />
     </div>
   );
 }

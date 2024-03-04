@@ -1,14 +1,40 @@
-// import type { NextApiRequest, NextApiResponse } from 'next';
 import Report from '@/server/models/Report';
-import { NextResponse } from 'next/server';
+import { NextRequest, NextResponse } from 'next/server';
 import dbConnect from '@/utils/db-connect';
 
-export async function GET() {
-  await dbConnect();
+interface ZipCodeFilters {
+  organizationId?: Record<string, Array<string>>;
+  $or?: { [x: string]: { $ne: number } }[];
+}
 
+export async function GET(request: NextRequest) {
+  await dbConnect();
   try {
+    const urlSearchParams = request.nextUrl.searchParams;
+    const organizationsString = urlSearchParams.get('organizations');
+    const organizations = organizationsString
+      ? organizationsString.split(',')
+      : [];
+    const metricsString = urlSearchParams.get('metrics');
+    const metrics = metricsString ? metricsString.split(',') : [];
+
+    const filter: ZipCodeFilters = {};
+
+    if (organizations && organizations.length) {
+      filter.organizationId = {
+        $in: organizations,
+      };
+    }
+
+    if (metrics && metrics.length) {
+      filter.$or = metrics.map((metric) => ({
+        [metric]: { $ne: 0 },
+      }));
+    }
+
     const zipCodeClientsServedMap = new Map<string, number>();
-    const reports = await Report.find({});
+    const reports = await Report.find(filter);
+
     reports.forEach((report) => {
       report.zipCodeClientsServed.forEach((zipCodeInfo) => {
         let currentCount =
@@ -32,17 +58,3 @@ export async function GET() {
     );
   }
 }
-
-// try {
-//   const zipCodeData = await Report.find({});
-//   res.status(200).json({ data: zipCodeData });
-// } catch (error) {
-//   console.error("Error fetching zip code data:", error);
-//   res.status(500).json({ message: "Error fetching data" });
-// }
-
-// To handle a POST request to /api
-// export async function POST(request: any) {
-//   console.log("HELLO");
-//   return NextResponse.json({ message: "Hello World" }, { status: 200 });
-// }
