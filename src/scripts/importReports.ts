@@ -1,5 +1,5 @@
 import fs from 'fs';
-import dbConnect from '@/server';
+import dbConnect from '@/utils/db-connect';
 import Report from '@/server/models/Report';
 import Organization from '@/server/models/Organization';
 import Project from '@/server/models/Project';
@@ -12,11 +12,13 @@ dbConnect()
       await Project.deleteMany({});
       await Report.deleteMany({});
     }
+
     const reportsDir = 'src/data/reports/';
     const reportFiles = await fs.promises.readdir(reportsDir);
-    reportFiles.forEach(
-      async (reportFileName) =>
-        await importCSVReport(reportsDir + reportFileName)
+    await Promise.all(
+      reportFiles.map((reportFileName) =>
+        importCSVReport(reportsDir + reportFileName)
+      )
     );
 
     process.exit();

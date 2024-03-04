@@ -81,41 +81,25 @@ export default function Map({ searchObject }: MapProps) {
   };
 
   const getStyle: StyleFunction<any> = (feature) => {
-    const clientServed =
-      zipCodeData[feature?.properties.ZCTA5CE10].clientsServed || 0;
+    const zipCode = feature?.properties.ZCTA5CE10;
+    const clientServed = zipCodeData[zipCode].clientsServed || 0;
     const fillColor = getColor(clientServed);
 
     return {
       fillColor,
       color: '#444',
       weight: 2,
-      fillOpacity: 0.5,
+      fillOpacity: zipCode == hoveredZipCode ? 1 : 0.5,
     };
   };
 
-  const highlightFeature = (e: LeafletMouseEvent) => {
-    const layer = e.target as L.Path;
-    layer.setStyle({
-      fillOpacity: 0.5,
-    });
-  };
-
-  const resetHighlight = (e: LeafletMouseEvent) => {
-    const layer = e.target as L.Path;
-    layer.setStyle({
-      fillOpacity: 0.1,
-    });
-    setHoveredZipCode(null);
-  };
-
   const handleLayerMouseover = (e: LeafletMouseEvent) => {
-    highlightFeature(e);
     const zipCode = (e.target as any).feature.properties?.ZCTA5CE10 as string;
     setHoveredZipCode(zipCode);
   };
 
-  const handleLayerMouseout = (e: LeafletMouseEvent) => {
-    resetHighlight(e);
+  const handleLayerMouseout = () => {
+    setHoveredZipCode(null);
   };
 
   const handleLayerClick = (e: LeafletMouseEvent) => {
@@ -146,7 +130,7 @@ export default function Map({ searchObject }: MapProps) {
               onEachFeature={(feature, layer) => {
                 layer.on({
                   mouseover: (e: LeafletMouseEvent) => handleLayerMouseover(e),
-                  mouseout: (e: LeafletMouseEvent) => handleLayerMouseout(e),
+                  mouseout: handleLayerMouseout,
                   click: handleLayerClick,
                 });
               }}

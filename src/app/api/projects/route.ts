@@ -1,4 +1,4 @@
-import dbConnect from '@/server';
+import dbConnect from '@/utils/db-connect';
 import { NextResponse, NextRequest } from 'next/server';
 import Project from '@/server/models/Project';
 

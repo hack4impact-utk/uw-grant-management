@@ -18,6 +18,7 @@ interface ZipCodeInfo {
 
 export async function GET(request: NextRequest) {
   await dbConnect();
+
   try {
     const urlSearchParams = request.nextUrl.searchParams;
     const organizationsString = urlSearchParams.get('organizations');

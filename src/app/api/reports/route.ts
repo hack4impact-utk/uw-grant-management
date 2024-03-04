@@ -1,11 +1,11 @@
-import dbConnect from '@/server';
+import dbConnect from '@/utils/db-connect';
 import { NextResponse, NextRequest } from 'next/server';
 import Report from '@/server/models/Report';
 
 /*
 Usage:
-/api/reports -> returns all reports 
-/api/reports?fields=clientsServed -> returns 'clientsServed' field for all reports 
+/api/reports -> returns all reports
+/api/reports?fields=clientsServed -> returns 'clientsServed' field for all reports
 /api/reports?projectId=12345 -> returns all reports for a specific project ID
 /api/reports?organizationId=67890 -> returns all reports for a specific organization ID
 /api/reports?fields=clientsServed&projectId=12345 -> returns 'clientsServed' field for all reports with a specific project ID
