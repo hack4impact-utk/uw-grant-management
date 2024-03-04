@@ -11,7 +11,8 @@ import Map from '../components/Map/index';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 
-export default function Page() {
+export default function HomePage() {
+  const pathname = usePathname();
   const [isFilterPanelOpen, setIsFilterPanelOpen] = useState(false);
   const [searchObject, setSearchObject] = useState<Record<string, any>>({
     organizations: [],
@@ -22,12 +23,11 @@ export default function Page() {
     setIsFilterPanelOpen(!isFilterPanelOpen);
   };
 
-  const pathname = usePathname();
-
   const buttonColor = (route: string) => ({
     color: route === pathname ? 'orange' : 'white',
   });
 
+  // const appBarHeight = '64px';
   return (
     <div style={{ display: 'flex', flexDirection: 'column', height: '100vh' }}>
       <AppBar position="relative" style={{ zIndex: 999 }}>
