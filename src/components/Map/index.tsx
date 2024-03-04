@@ -12,8 +12,18 @@ import { geoJSONData } from '../../utils/constants/geoData';
 import { NumberValue, scaleQuantile } from 'd3-scale';
 import CircularProgress from '@mui/material/CircularProgress';
 
+interface AssistanceMetricOption {
+  label: string;
+  value: string;
+}
+
+interface MapProps {
+  selectedMetrics: AssistanceMetricOption[];
+}
+
 // Defining the Map component
-export default function Map() {
+//export default function Map({ searchObject }) {
+export default function Map({ selectedMetrics }: MapProps) {
   const knoxvillePosition: LatLngTuple = [35.9606, -83.9207];
   const mapRef = useRef<L.Map | null>(null);
   const [drawerOpen, setDrawerOpen] = React.useState(false);
@@ -34,11 +44,34 @@ export default function Map() {
   };
 
   useEffect(() => {
-    getZipCodeData();
-  }, []);
+    const fetchFilteredZipCodeData = async () => {
+      setIsLoading(true);
+      const metricsQuery = selectedMetrics
+        .map((metric) => metric.value)
+        .join(',');
+      console.log(selectedMetrics);
+      const response = await fetch(
+        `/api/zipcodes/?metrics=${encodeURIComponent(metricsQuery)}`
+      );
 
-  // This groups each zipcode based on their clients served and assigns
-  // the zipcode to a color
+      if (!response.ok) {
+        console.error('Failed to fetch filtered zip code data');
+        setIsLoading(false);
+        return;
+      }
+      const data = await response.json();
+      console.log(data);
+      setZipCodedata(data.data);
+      setIsLoading(false);
+    };
+
+    if (selectedMetrics.length > 0) {
+      fetchFilteredZipCodeData();
+    } else {
+      getZipCodeData();
+    }
+  }, [selectedMetrics]);
+
   const clientsServedArray = Object.values(zipCodeData).map(Number);
 
   const quantileScale = scaleQuantile()
