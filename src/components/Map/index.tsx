@@ -8,12 +8,20 @@ import Box from '@mui/material/Box';
 import L, { LatLngTuple, StyleFunction, LeafletMouseEvent } from 'leaflet';
 import { geoJSONData } from '../../utils/constants/geoData';
 import { NumberValue, scaleQuantile } from 'd3-scale';
-import CircularProgress from '@mui/material/CircularProgress';
 import Card from '@mui/material/Card';
 import CardContent from '@mui/material/CardContent';
+import LoadingBox from '../LoadingBox';
 
 interface MapProps {
   searchObject: Record<string, any>;
+}
+
+interface ZipCodeInfo {
+  clientsServed: number;
+  totalOrganizationsPresent: number;
+  totalProjectsPresent: number;
+  organizationsPresent: Set<string>;
+  projectsPresent: Set<string>;
 }
 
 // Defining the Map component
@@ -22,9 +30,11 @@ export default function Map({ searchObject }: MapProps) {
   const mapRef = useRef<L.Map | null>(null);
   const [drawerOpen, setDrawerOpen] = React.useState(false);
   const [selectedZipCode, setSelectedZipCode] = React.useState('');
-  const [zipCodeData, setZipCodedata] = useState<Record<string, number>>({});
+  const [zipCodeData, setZipCodedata] = useState<Record<string, ZipCodeInfo>>(
+    {}
+  );
   const [isLoading, setIsLoading] = useState(true);
-  const [hoveredRegion, setHoveredRegion] = useState<string | null>(null);
+  const [hoveredZipCode, setHoveredZipCode] = useState<string | null>(null);
 
   const getZipCodeData = async () => {
     setIsLoading(true);
@@ -48,7 +58,9 @@ export default function Map({ searchObject }: MapProps) {
     getZipCodeData();
   }, [searchObject]);
 
-  const clientsServedArray = Object.values(zipCodeData).map(Number);
+  const clientsServedArray = Object.values(zipCodeData).map((zipCodeInfo) =>
+    Number(zipCodeInfo.clientsServed)
+  );
 
   const quantileScale = scaleQuantile()
     .domain(clientsServedArray)
@@ -69,7 +81,8 @@ export default function Map({ searchObject }: MapProps) {
   };
 
   const getStyle: StyleFunction<any> = (feature) => {
-    const clientServed = zipCodeData[feature?.properties.ZCTA5CE10] || 0;
+    const clientServed =
+      zipCodeData[feature?.properties.ZCTA5CE10].clientsServed || 0;
     const fillColor = getColor(clientServed);
 
     return {
@@ -92,13 +105,13 @@ export default function Map({ searchObject }: MapProps) {
     layer.setStyle({
       fillOpacity: 0.1,
     });
-    setHoveredRegion(null);
+    setHoveredZipCode(null);
   };
 
   const handleLayerMouseover = (e: LeafletMouseEvent) => {
     highlightFeature(e);
     const zipCode = (e.target as any).feature.properties?.ZCTA5CE10 as string;
-    setHoveredRegion(zipCode);
+    setHoveredZipCode(zipCode);
   };
 
   const handleLayerMouseout = (e: LeafletMouseEvent) => {
@@ -114,17 +127,7 @@ export default function Map({ searchObject }: MapProps) {
   return (
     <div style={{ width: '100%', height: '100%' }}>
       {isLoading ? (
-        <Box
-          sx={{
-            display: 'flex',
-            justifyContent: 'center',
-            alignItems: 'center',
-            height: '100%',
-            width: '100%',
-          }}
-        >
-          <CircularProgress size="4rem" />
-        </Box>
+        <LoadingBox />
       ) : (
         <div style={{ height: '100%' }}>
           <MapContainer
@@ -149,15 +152,25 @@ export default function Map({ searchObject }: MapProps) {
               }}
             />
           </MapContainer>
-          {hoveredRegion && (
+          {hoveredZipCode && (
             <Card
               style={{ position: 'absolute', top: 84, right: 20, zIndex: 400 }}
             >
               <CardContent>
-                <h2>Zip Code: {hoveredRegion}</h2>
+                <h2>Zip Code: {hoveredZipCode}</h2>
                 <br />
-                <p>Total Clients Served: {}</p>
-                <p>Total Projects: {}</p>
+                <p>
+                  Total Clients Served:{' '}
+                  {zipCodeData[hoveredZipCode].clientsServed}
+                </p>
+                <p>
+                  Total Organizations:{' '}
+                  {zipCodeData[hoveredZipCode].totalOrganizationsPresent}
+                </p>
+                <p>
+                  Total Projects:{' '}
+                  {zipCodeData[hoveredZipCode].totalProjectsPresent}
+                </p>
               </CardContent>
             </Card>
           )}

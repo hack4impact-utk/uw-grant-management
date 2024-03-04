@@ -2,8 +2,11 @@
 import React from 'react';
 import { usePathname } from 'next/navigation';
 import Link from 'next/link';
-import { AppBar, Toolbar, IconButton, Typography, Button } from '@mui/material';
-import MenuIcon from '@mui/icons-material/Menu';
+import { AppBar, Toolbar, Typography, Button } from '@mui/material';
+
+// TODO: Uncomment these when we add back the menu icon
+// import { AppBar, Toolbar, IconButton, Typography, Button } from '@mui/material';
+// import MenuIcon from '@mui/icons-material/Menu';
 
 function Navbar() {
   const pathname = usePathname();
@@ -13,9 +16,9 @@ function Navbar() {
   });
 
   return (
-    <AppBar position="static" sx={{ flexGrow: 1 }}>
+    <AppBar position="relative" style={{ zIndex: 999 }}>
       <Toolbar>
-        <IconButton
+        {/* <IconButton
           size="large"
           edge="start"
           color="inherit"
@@ -23,7 +26,7 @@ function Navbar() {
           sx={{ mr: 2 }}
         >
           <MenuIcon />
-        </IconButton>
+        </IconButton> */}
         <Typography
           variant="h6"
           noWrap
@@ -41,14 +44,11 @@ function Navbar() {
             United Way Grant Management
           </Link>
         </Typography>
-        <Link href="/nonprofits" passHref>
-          <Button sx={buttonColor('/nonprofits')}>Nonprofits</Button>
+        <Link href="/" passHref>
+          <Button sx={buttonColor('/')}>Map</Button>
         </Link>
-        <Link href="/examplepage" passHref>
-          <Button sx={buttonColor('/examplepage')}>Page 2</Button>
-        </Link>
-        <Link href="/examplepage2" passHref>
-          <Button sx={buttonColor('/examplepage2')}>Page 3</Button>
+        <Link href="/organizations" passHref>
+          <Button sx={buttonColor('/organizations')}>Organizations</Button>
         </Link>
       </Toolbar>
     </AppBar>

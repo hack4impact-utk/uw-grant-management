@@ -1,10 +1,19 @@
 import Report from '@/server/models/Report';
 import { NextRequest, NextResponse } from 'next/server';
 import dbConnect from '@/utils/db-connect';
+import { Organization, Project } from '@/utils/types/models';
 
 interface ZipCodeFilters {
   organizationId?: Record<string, Array<string>>;
   $or?: { [x: string]: { $ne: number } }[];
+}
+
+interface ZipCodeInfo {
+  clientsServed: number;
+  totalOrganizationsPresent: number;
+  totalProjectsPresent: number;
+  organizationsPresent: Set<string>;
+  projectsPresent: Set<string>;
 }
 
 export async function GET(request: NextRequest) {
@@ -32,17 +41,40 @@ export async function GET(request: NextRequest) {
       }));
     }
 
-    const zipCodeClientsServedMap = new Map<string, number>();
-    const reports = await Report.find(filter);
+    const zipCodeClientsServedMap = new Map<string, ZipCodeInfo>();
+    const reports = await Report.find(filter)
+      .populate<{ organizationId: Organization }>('organizationId')
+      .populate<{ projectId: Project }>('projectId');
 
     reports.forEach((report) => {
+      const organization = report.organizationId;
+      const project = report.projectId;
+
       report.zipCodeClientsServed.forEach((zipCodeInfo) => {
-        let currentCount =
-          zipCodeClientsServedMap.get(zipCodeInfo.zipCode) || 0;
-        currentCount += zipCodeInfo.clientsServed;
-        zipCodeClientsServedMap.set(zipCodeInfo.zipCode, currentCount);
+        const currentInfo = zipCodeClientsServedMap.get(
+          zipCodeInfo.zipCode
+        ) || {
+          clientsServed: 0,
+          totalOrganizationsPresent: 0,
+          totalProjectsPresent: 0,
+          organizationsPresent: new Set<string>(),
+          projectsPresent: new Set<string>(),
+        };
+
+        currentInfo.clientsServed += zipCodeInfo.clientsServed;
+        if (zipCodeInfo.clientsServed) {
+          currentInfo.organizationsPresent.add(organization.name);
+          currentInfo.projectsPresent.add(project.name);
+          currentInfo.totalOrganizationsPresent =
+            currentInfo.organizationsPresent.size;
+          currentInfo.totalProjectsPresent =
+            currentInfo.organizationsPresent.size;
+        }
+
+        zipCodeClientsServedMap.set(zipCodeInfo.zipCode, currentInfo);
       });
     });
+
     return NextResponse.json(
       {
         success: true,
