@@ -11,7 +11,9 @@ const DynamicMap = dynamic(() => import('../components/Map/index'), {
 
 export default function MapPage() {
   const [isFilterPanelOpen, setIsFilterPanelOpen] = useState(false);
-  const [searchObject, setSearchObject] = useState<Record<string, any>>({
+  const [searchObject, setSearchObject] = useState<
+    Record<string, Array<string>>
+  >({
     organizations: [],
     metrics: [],
   });
