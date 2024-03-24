@@ -50,6 +50,9 @@ function Navbar() {
         <Link href="/organizations" passHref>
           <Button sx={buttonColor('/organizations')}>Organizations</Button>
         </Link>
+        <Link href="/import" passHref>
+          <Button sx={buttonColor('/import')}>Import</Button>
+        </Link>
       </Toolbar>
     </AppBar>
   );
