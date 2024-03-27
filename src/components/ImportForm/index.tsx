@@ -126,7 +126,11 @@ export default function ImportForm() {
             accept=".csv"
             id="contained-button-file"
             type="file"
-            onChange={(e) => handleInputChange('file', e.target.files[0])}
+            onChange={(e) => {
+              if (e.target.files) {
+                handleInputChange('file', e.target.files[0]);
+              }
+            }}
             required
           />
         </Button>
