@@ -2,28 +2,36 @@ import { NextResponse, NextRequest } from 'next/server';
 import fs from 'fs/promises';
 import { importCSVReport } from '@/utils/importing';
 
-// Post request to save the file to the server
-// Will also connect to the db and import the csv file
+/* 
+    Handle POST request to /api/import.
+    This endpoint will save the uploaded CSV file to the server and import the data to the database.
+*/
+
 export async function POST(req: NextRequest) {
-  // Get the form data
   const formData = await req.formData();
   const file = formData.get('file') as File;
-  const startYear = formData.get('startYear');
-  const startMonth = formData.get('startMonth');
-  const endYear = formData.get('endYear');
-  const endMonth = formData.get('endMonth');
+  const startYear = formData.get('startYear') as string;
+  const startMonth = formData.get('startMonth') as string;
+  const endYear = formData.get('endYear') as string;
+  const endMonth = formData.get('endMonth') as string;
 
-  // Construct new file name & path
   const newFileName =
-    startMonth + '-' + startYear + '_' + endMonth + '-' + endYear + '.csv';
+    startMonth.toLowerCase() +
+    '-' +
+    startYear +
+    '_' +
+    endMonth.toLowerCase() +
+    '-' +
+    endYear +
+    '.csv';
   const newFilePath = 'src/data/reports/' + newFileName;
 
-  // Save the file to the server
   try {
+    // Save the file to the server.
     const fileBuffer = await file.arrayBuffer();
     await fs.writeFile(newFilePath, Buffer.from(fileBuffer));
 
-    // Import the csv file
+    // Import the CSV report to the database.
     await importCSVReport(newFilePath);
 
     return NextResponse.json(
