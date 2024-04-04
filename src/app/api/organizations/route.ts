@@ -1,12 +1,27 @@
 import dbConnect from '@/utils/db-connect';
-import { NextResponse } from 'next/server';
+import { NextResponse, NextRequest } from 'next/server';
 import Organization from '@/server/models/Organization';
 
-export async function GET() {
+interface Query {
+  name?: { $regex: RegExp };
+}
+
+export async function GET(req: NextRequest) {
   await dbConnect();
   try {
-    await dbConnect();
-    const organizationInfo = await Organization.find().select(['id', 'name']);
+    const query: Query = {};
+
+    // Check if the request object exists and has the expected query parameter
+    if (req) {
+      const searchTerm = req.nextUrl.searchParams.get('search');
+      if (searchTerm) {
+        const regex = new RegExp(searchTerm, 'i');
+        query.name = { $regex: regex };
+      }
+    }
+
+    // Will fetch all organizations if query is not provided
+    const organizationInfo = await Organization.find(query);
     return NextResponse.json(organizationInfo);
   } catch (error) {
     console.error('Error fetching organization data:', error);
