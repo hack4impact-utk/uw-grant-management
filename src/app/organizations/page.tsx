@@ -31,7 +31,7 @@ function OrganizationsPage() {
     const results = await fetchOrganizations(searchTerm);
     setIsLoading(false);
     setOrganizations(results);
-  }, 1000); // This specifies the debounce time, I have it set to 1000ms for better visual testing
+  }, 500); // This specifies the debounce time, I have it set to 1000ms for better visual testing
 
   // Memoized version of the debounced request
   // Without useCallback, the debounced function gets recreated on every component render leading to an API call with every keystroke, albeit delayed by the specified time
