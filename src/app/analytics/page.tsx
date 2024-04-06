@@ -17,6 +17,8 @@ const AnalyticsPage = () => {
   const [organizations, setOrganizations] = useState<OrganizationRow[]>([]);
   const [projects, setProjects] = useState<ProjectRow[]>([]);
   const [projectOptions, setProjectOptions] = useState<ProjectRow[]>([]);
+
+  // State to keep track of selected filters
   const [selectedFilters, setSelectedFilters] = useState<{
     organizations: string[];
     projects: string[];
@@ -48,6 +50,7 @@ const AnalyticsPage = () => {
     getProjects();
   }, []);
 
+  // Update project options based on selected organizations
   useEffect(() => {
     if (selectedFilters.organizations.length > 0) {
       setProjectOptions(
@@ -60,6 +63,7 @@ const AnalyticsPage = () => {
     }
   }, [selectedFilters.organizations, projects]);
 
+  // Handles changes to filter options and clears unrelated projects when Organization is changed
   const handleAutocompleteChange = (name: string, value: any[]) => {
     if (name === 'organizations') {
       const selectedOrgIds = value.map((item) => item.value);
