@@ -16,6 +16,10 @@ interface FilterPanelAutocompleteProps {
     targetName: string,
     values: AutocompleteOption[]
   ) => void;
+  isOptionEqualToValue?: (
+    option: AutocompleteOption,
+    value: AutocompleteOption
+  ) => boolean;
 }
 
 export function FilterPanelAutocomplete({
@@ -24,6 +28,7 @@ export function FilterPanelAutocomplete({
   name,
   label,
   handleAutocompleteChange,
+  isOptionEqualToValue,
 }: FilterPanelAutocompleteProps) {
   return (
     <Autocomplete
@@ -32,6 +37,7 @@ export function FilterPanelAutocomplete({
       onChange={(event, values) => handleAutocompleteChange(name, values)}
       options={options}
       getOptionLabel={(option) => option.label}
+      isOptionEqualToValue={isOptionEqualToValue}
       sx={{ width: 300, mt: 2 }}
       renderOption={(props, option) => {
         return (
