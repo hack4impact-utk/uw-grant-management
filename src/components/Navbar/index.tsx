@@ -53,6 +53,9 @@ function Navbar() {
         <Link href="/import" passHref>
           <Button sx={buttonColor('/import')}>Import</Button>
         </Link>
+        <Link href="/analytics" passHref>
+          <Button sx={buttonColor('/analytics')}>Analytics</Button>
+        </Link>
       </Toolbar>
     </AppBar>
   );
