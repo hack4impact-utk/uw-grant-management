@@ -1,10 +1,12 @@
-'use client';
 import { Drawer } from '../Drawer';
 import React, { useEffect, useState } from 'react';
 import {
   FilterPanelAutocomplete,
   AutocompleteOption,
 } from './FilterPanelAutocomplete';
+import { styled } from '@mui/material/styles';
+import Tooltip, { TooltipProps, tooltipClasses } from '@mui/material/Tooltip';
+import Typography from '@mui/material/Typography';
 
 interface FilterPanelProps {
   open: boolean;
@@ -17,6 +19,46 @@ interface OrganizationRow {
   id: string;
   name: string;
 }
+
+const HtmlTooltip = styled(({ className, ...props }: TooltipProps) => (
+  <Tooltip {...props} classes={{ popper: className }} />
+))(({ theme }) => ({
+  [`& .${tooltipClasses.tooltip}`]: {
+    backgroundColor: '#f5f5f9',
+    color: 'rgba(0, 0, 0, 0.87)',
+    maxWidth: 220,
+    fontSize: theme.typography.pxToRem(12),
+    border: '1px solid #dadde9',
+  },
+}));
+
+const ContainerDiv = styled('div')({
+  display: 'flex',
+  flexDirection: 'row',
+  justifyContent: 'center',
+  alignItems: 'center',
+});
+
+const CustomTooltip = styled('div')({
+  display: 'flex',
+  justifyContent: 'center',
+  alignItems: 'center',
+  height: 'full',
+});
+
+const CustomTooltipContent = styled('p')({
+  padding: '5px 10px',
+  borderWidth: '2px',
+  borderColor: '#000',
+  borderRadius: '20px',
+  backgroundColor: '#e1f5fe',
+  width: 'fit-content',
+  height: 'fit-content',
+  textAlign: 'right',
+  float: 'right',
+  marginLeft: '10px',
+  marginTop: '10px',
+});
 
 const FilterPanel: React.FC<FilterPanelProps> = ({
   open,
@@ -114,7 +156,8 @@ const FilterPanel: React.FC<FilterPanelProps> = ({
       >
         Filters
       </h2>
-      <div>
+
+      <ContainerDiv>
         <FilterPanelAutocomplete
           name="organizations"
           label="Select organizations"
@@ -122,8 +165,22 @@ const FilterPanel: React.FC<FilterPanelProps> = ({
           handleAutocompleteChange={handleAutoCompleteChange}
           options={organizationsOptions}
         />
-      </div>
-      <div>
+        <HtmlTooltip
+          title={
+            <>
+              <Typography color="inherit">Filter Organizations</Typography>
+              <b>{'Select any organization(s)'}</b>
+              {` that you want the map to display about that particular organization’s information.`}
+            </>
+          }
+        >
+          <CustomTooltip>
+            <CustomTooltipContent>?</CustomTooltipContent>
+          </CustomTooltip>
+        </HtmlTooltip>
+      </ContainerDiv>
+
+      <ContainerDiv>
         <FilterPanelAutocomplete
           name="metrics"
           label="Select metrics"
@@ -131,7 +188,20 @@ const FilterPanel: React.FC<FilterPanelProps> = ({
           handleAutocompleteChange={handleAutoCompleteChange}
           options={metricsOptions}
         />
-      </div>
+        <HtmlTooltip
+          title={
+            <>
+              <Typography color="inherit">Select Metrics</Typography>
+              <b>{'Select any metric(s)'}</b>
+              {' that you want to be displayed on the map.'}
+            </>
+          }
+        >
+          <CustomTooltip>
+            <CustomTooltipContent>?</CustomTooltipContent>
+          </CustomTooltip>
+        </HtmlTooltip>
+      </ContainerDiv>
     </Drawer>
   );
 };
