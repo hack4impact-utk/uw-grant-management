@@ -168,9 +168,11 @@ const FilterPanel: React.FC<FilterPanelProps> = ({
         <HtmlTooltip
           title={
             <>
-              <Typography color="inherit">Filter Organizations</Typography>
-              <b>{'Select any organization(s)'}</b>
-              {` that you want the map to display about that particular organization’s information.`}
+              <Typography color="inherit">Select Organizations</Typography>
+              <p>
+                The map data and regional color gradient will be rendered using
+                only the reports from the selected organizations.
+              </p>
             </>
           }
         >
@@ -192,8 +194,11 @@ const FilterPanel: React.FC<FilterPanelProps> = ({
           title={
             <>
               <Typography color="inherit">Select Metrics</Typography>
-              <b>{'Select any metric(s)'}</b>
-              {' that you want to be displayed on the map.'}
+              <p>
+                The map data and regional color gradient will be rendered using
+                only the reports that have a non-zero value for at least one of
+                the selected metrics.
+              </p>
             </>
           }
         >
