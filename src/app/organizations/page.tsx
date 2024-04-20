@@ -3,6 +3,8 @@ import { ChangeEvent, useCallback, useEffect, useState } from 'react';
 import OrganizationAccordion from '@/components/OrganizationAccordion';
 import { OrganizationDocument as OrganizationType } from '@/server/models/Organization';
 import LoadingBox from '@/components/LoadingBox';
+import InputAdornment from '@mui/material/InputAdornment';
+import { Search } from '@mui/icons-material';
 import { TextField, Box, Container } from '@mui/material';
 import debounce from 'lodash.debounce';
 
@@ -16,7 +18,6 @@ function OrganizationsPage() {
   const fetchOrganizations = async (searchTerm: string) => {
     try {
       const response = await fetch(`/api/organizations?search=${searchTerm}`);
-      console.log('fetched data');
       if (!response.ok) throw new Error('Failed to fetch');
       return await response.json();
     } catch (error) {
@@ -54,22 +55,40 @@ function OrganizationsPage() {
   }, []);
 
   return (
-    <Container maxWidth={false} sx={{ width: '100%', margin: '0 auto' }}>
-      <Box my={4}>
+    <Container
+      maxWidth={false}
+      sx={{
+        width: '95vw',
+        boxShadow: '0px 4px 20px rgba(0, 0, 0, 0.3)',
+        paddingTop: '.1rem',
+        paddingBottom: '1rem',
+        height: 'fit-content',
+        marginTop: '1rem',
+      }}
+    >
+      <Box
+        sx={{
+          marginTop: '24px',
+        }}
+      >
         <TextField
-          label="Search"
-          variant="outlined"
+          placeholder="Search"
           fullWidth
           value={searchTerm}
+          variant="standard"
           onChange={handleSearchChange}
+          InputProps={{
+            startAdornment: (
+              <InputAdornment position="start">
+                <Search />
+              </InputAdornment>
+            ),
+          }}
           sx={{
             '& .MuiInputBase-root': {
-              borderRadius: '24px',
-              backgroundColor: 'background.paper',
-              boxShadow: '0px 4px 20px rgba(0, 0, 0, 0.1)',
-            },
-            '& .MuiOutlinedInput-notchedOutline': {
-              borderColor: 'transparent',
+              backgroundColor: 'hsl(0, 0%, 95.2%)',
+              height: '3rem',
+              padding: '1rem',
             },
             '& .MuiInputLabel-root': {
               color: 'text.secondary',
@@ -77,7 +96,15 @@ function OrganizationsPage() {
           }}
         />
       </Box>
-      <Box sx={{ height: 'calc(100vh - 200px)', overflowY: 'auto' }}>
+      <Box
+        sx={{
+          height: '80vh',
+          overflowY: 'auto',
+          padding: '12px',
+          backgroundColor: 'hsl(0, 0%, 90.2%)',
+          // border: '1px solid gray',
+        }}
+      >
         {isLoading ? (
           <LoadingBox />
         ) : (

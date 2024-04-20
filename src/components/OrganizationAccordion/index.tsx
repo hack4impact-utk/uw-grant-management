@@ -10,6 +10,7 @@ import RemoveIcon from '@mui/icons-material/Remove';
 import { OrganizationDocument as OrganizationType } from '@/server/models/Organization';
 import { ProjectDocument as ProjectType } from '@/server/models/Project';
 import { ReportDocument as ReportType } from '@/server/models/Report';
+import { theme } from '../../utils/constants/themes';
 
 function OrganizationAccordion({
   organization,
@@ -45,25 +46,52 @@ function OrganizationAccordion({
     <Accordion
       expanded={isOpen}
       style={{
-        margin: '10px',
-        borderRadius: '10px',
+        borderRadius: '2px',
         color: 'black',
-        backgroundColor: 'rgba(192, 210, 255, 0.8)',
+        backgroundColor: theme.primaryYellowRGBA(50),
       }}
     >
       <AccordionSummary
-        expandIcon={isOpen ? <RemoveIcon /> : <AddIcon />}
+        expandIcon={
+          isOpen ? (
+            <RemoveIcon
+              sx={{
+                color: theme.whiteRGBA(50),
+              }}
+            />
+          ) : (
+            <AddIcon
+              sx={{
+                color: theme.whiteRGBA(50),
+              }}
+            />
+          )
+        }
         onClick={fetchProjects}
         style={{
-          borderRadius: '10px',
+          borderRadius: '2px',
+          border: `1px solid ${theme.whiteRGBA(40)}`,
           color: 'white',
-          backgroundColor: 'rgba(50, 102, 218, 1)',
+          backgroundColor: theme.primaryBlue,
         }}
       >
-        <Typography>{organization.name}</Typography>
+        <Typography>
+          <strong>{organization.name}</strong>
+        </Typography>
       </AccordionSummary>
       <AccordionDetails>
-        <Typography>Projects:</Typography>
+        <Typography
+          sx={{
+            fontWeight: 'bold',
+            borderBottom: `2px solid ${theme.primaryBlueRGBA(50)}`,
+            color: theme.primaryBlue,
+            width: '100%',
+            padding: '4px',
+            margin: '8px 0',
+          }}
+        >
+          Organization Projects
+        </Typography>
         {projects.map((project, index) => (
           <ProjectAccordion key={index} project={project} />
         ))}
@@ -101,22 +129,23 @@ function ProjectAccordion({ project }: { project: ProjectType }) {
     <Accordion
       expanded={isOpen}
       style={{
-        margin: '7px',
-        borderRadius: '10px',
         color: 'black',
-        backgroundColor: 'rgba(241, 244, 251, 1)',
+        backgroundColor: 'white',
       }}
     >
       <AccordionSummary
         expandIcon={isOpen ? <RemoveIcon /> : <AddIcon />}
         onClick={fetchCleientsServed}
         style={{
-          borderRadius: '10px',
-          color: 'black',
-          backgroundColor: 'white',
+          borderRadius: `4px 4px ${isOpen ? '0px 0px ' : '4px 4px'}`,
+          transition: 'border-radius 300ms',
+          color: theme.whiteRGBA(90),
+          backgroundColor: theme.primaryBlueRGBA(85),
         }}
       >
-        <Typography>{project.name}</Typography>
+        <Typography>
+          <strong>{project.name}</strong>
+        </Typography>
       </AccordionSummary>
       <AccordionDetails>
         {clientsServed.length === 0 ? (
