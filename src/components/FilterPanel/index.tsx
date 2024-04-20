@@ -51,7 +51,7 @@ const CustomTooltipContent = styled('p')({
   borderWidth: '2px',
   borderColor: '#000',
   borderRadius: '20px',
-  backgroundColor: '#e1f5fe',
+  backgroundColor: '#FFB351',
   width: 'fit-content',
   height: 'fit-content',
   textAlign: 'right',
