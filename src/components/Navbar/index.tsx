@@ -21,15 +21,6 @@ const useStyles = makeStyles({
       color: 'white',
     },
   },
-  secondaryButton: {
-    fontWeight: 'bold',
-    margin: '0px 5px',
-    backgroundColor: primary_yellow,
-    '&:hover': {
-      backgroundColor: primary_yellow,
-      color: 'white',
-    },
-  },
 });
 
 function Navbar() {
@@ -38,7 +29,8 @@ function Navbar() {
   const classes = useStyles();
 
   const buttonColor = (route: string) => ({
-    color: route === pathname ? primary_blue : primary_blue,
+    color: primary_blue,
+    backgroundColor: route === pathname ? primary_yellow : 'white',
   });
 
   return (
@@ -47,15 +39,6 @@ function Navbar() {
       style={{ zIndex: 999, padding: '0px 0px', backgroundColor: '#fff' }}
     >
       <Toolbar>
-        {/* <IconButton
-          size="large"
-          edge="start"
-          color="inherit"
-          aria-label="open drawer"
-          sx={{ mr: 2 }}
-        >
-          <MenuIcon />
-        </IconButton> */}
         <Typography
           variant="h6"
           noWrap
@@ -104,10 +87,7 @@ function Navbar() {
           </Button>
         </Link>
         <Link href="/analytics" passHref>
-          <Button
-            className={classes.secondaryButton}
-            sx={buttonColor('/analytics')}
-          >
+          <Button className={classes.boldButton} sx={buttonColor('/analytics')}>
             Analytics
           </Button>
         </Link>
