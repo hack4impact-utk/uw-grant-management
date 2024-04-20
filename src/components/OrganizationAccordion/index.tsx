@@ -131,6 +131,7 @@ function ProjectAccordion({ project }: { project: ProjectType }) {
       style={{
         color: 'black',
         backgroundColor: 'white',
+        borderRadius: `4px`,
       }}
     >
       <AccordionSummary
