@@ -102,3 +102,143 @@ export const focusAreaIndicators = [
   '# of youth engaged in volunteer or other non-academic activities',
   '# of youth gaining knowledge and skills within structured out-of-school programming',
 ] as const;
+
+export const OrganizationProjects: [string, string][] = [
+  ['A 1 Learning Connections', 'Serving in the Midst of a Storm'],
+  [
+    'Boys & Girls Clubs of the Tennessee Valley',
+    "Boys & Girls Clubs of the Tennessee Valley's MESH (Member Emotional and Social Health) Program",
+  ],
+  [
+    'Bridge Refugee Services, Inc.',
+    'Refugee Emergency Supplemental Nutritional Assistance Program (RESNAP)',
+  ],
+  [
+    'Centro Hispano de East Tennessee',
+    'Knox Area Latino Food Insecurity Safety Net',
+  ],
+  [
+    'Centro Hispano de East Tennessee',
+    'Knox Area Latino Mental Health Support',
+  ],
+  [
+    'Centro Hispano de East Tennessee',
+    'ARPA’s Rental Assistance for Latinx Households',
+  ],
+  ['Fostering Hope', 'Back 2 School Event'],
+  [
+    "Friends of Tennessee's Babies with Special Needs",
+    'Meeting Basic Needs of Families of Young Children with Special Needs',
+  ],
+  ['Girl Talk, Inc.', 'Safe & Healing Spaces'],
+  [
+    'Grow Partnership Tennessee',
+    'Promoting Unity Understanding through Safety and Health-PUUSH',
+  ],
+  ['Helen Ross McNabb Center', 'Elevate Recovery School Peer Group'],
+  [
+    'InterFaith Health Center',
+    'Expanded Mental Health Services for the Latinx Community & Other Underserved Groups',
+  ],
+  [
+    'Karate Five Association, Inc.',
+    'Fighting to Save Lives thru the Mental, Physical and Emotional Training Disciplines of Martial Arts',
+  ],
+  [
+    'Karate Five Association, Inc.',
+    'Fighting to Save Lives through the Mental, Physical and Emotional Training Disciplines',
+  ],
+  [
+    'Knox County Schools PTA Clothing Center',
+    'KNOX COUNTY SCHOOLS CLOTHING CENTER PTA',
+  ],
+  ['Knoxville - Knox County CAC', 'Homeward Bound Rental Assistance Program'],
+  [
+    'Knoxville - Knox County Community Action Committee for Affordable Neighborhoods - CAAN',
+    'Nutritional Supplements for At-Risk Older Adults',
+  ],
+  ['Knoxville Internationals Network-KIN', 'ELL Summer Camp'],
+  ['Knoxville Leadership Foundation', 'Compassion Coalition - Gap Needs'],
+  ['Legal Aid of East Tennessee', 'Mental Health Law Partnership'],
+  [
+    'Legal Aid of East Tennessee',
+    'Housing Stability for Low-Income Knoxvillians',
+  ],
+  ['Little Oaks Academy', 'Little Oaks Academy Tuition Scholarship'],
+  ['Mental Health Association of East Tennessee', 'Treatment Access Bank'],
+  [
+    'Mental Health Association of East Tennessee',
+    'Mental Health Association of East Tennessee: Treatment Access Bank',
+  ],
+  ['Metro Drug Coalition', 'Metro Drug Coalition Recovery Housing Fund'],
+  [
+    'My Daughters Journey, Inc.',
+    'Diamondz in the Rough Mentoring and Leadership Academy for Justice Involved and Homeless Youth',
+  ],
+  [
+    'My Daughters Journey, Inc.',
+    'Diamondz in the Rough Mentoring and Leadership Academy Community Behavioral Initiative',
+  ],
+  [
+    'My Daughters Journey, Inc.',
+    'My Daughters Journey Family Advocacy Program',
+  ],
+  [
+    'New Direction Health Care Solutions, Inc.',
+    'New Direction - Dealing With Loneliness and the Mental Health Implications',
+  ],
+  [
+    'New Direction Health Care Solutions, Inc.',
+    'New Direction - Back to Basic Needs at Vaccine Clinics (The Period)',
+  ],
+  ['Next Step Initiative', 'Community Outreach Program'],
+  ['Next Step Initiative', 'Trenches 2 Treatment / Community Outreach Program'],
+  [
+    'Nourish Knoxville, Inc',
+    'Nourish Community: Locally Grown Produce for At-Risk Community Members',
+  ],
+  [
+    'Senior Citizens Home Assistance Service, Inc (SCHAS)',
+    'SCHAS Out Shopping (SOS)',
+  ],
+  [
+    'Senior Citizens Home Assistance Service, Inc (SCHAS)',
+    'SCHAS Out Shopping (SOS)',
+  ],
+  ['Shora Foundation', 'Academic Center'],
+  ['Shora Foundation', 'Shora Foundation - Mental Health Division'],
+  ['Shora Foundation', 'Shora Foundation Academic Center'],
+  [
+    'Soar Youth Ministries, dba Thrive Lonsdale',
+    'Thrive Afterschool and Summer Program Providing Nutritious Meals and Academic Support',
+  ],
+  [
+    'Solidarity Development and Light Association',
+    'Refugee family stabilization',
+  ],
+  ['Spark', 'Spark A Journey'],
+  ["Susannah's House", 'Mothers in Recovery'],
+  [
+    "The Children's Center of Knoxville",
+    'Tuition Assistance for low-income/at risk families',
+  ],
+  [
+    'The Mend House Sober Living Community for Men',
+    'Healthy Living Through Sobriety',
+  ],
+  [
+    'The Mend House Sober Living Community for Men',
+    'MEND(Mental & Emotional Needs Development)',
+  ],
+  ['The Salvation Army, A Georgia Corporation', 'Emergency Assistance Program'],
+  ['Two Bikes', 'The Bike School'],
+  [
+    'Wesley House Community Center',
+    'Wesley House Community Center’s expanding childcare and addressing food insecurity',
+  ],
+  [
+    'YWCA Knoxville and the Tennessee Valley',
+    'Phyllis Wheatley Center Emergency Needs Fund',
+  ],
+  ['YWCA Knoxville and the Tennessee Valley', 'Onsite Mental Health Expansion'],
+];
