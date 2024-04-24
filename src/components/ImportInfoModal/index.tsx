@@ -72,8 +72,8 @@ export default function ImportInfoModal() {
               sx={{ paddingBottom: 2 }}
             >
               Please ensure your CSV file contains the following fields before
-              importing. If any of the fields are not applicable, please enter
-              0.
+              importing. If the data for a field is not available, please enter
+              a 0 as a placeholder.
             </Typography>
             <TableContainer sx={{ maxHeight: '60vh' }}>
               <Table stickyHeader aria-label="file requirements">
