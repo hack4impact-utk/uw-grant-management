@@ -7,6 +7,7 @@ import {
 import { styled } from '@mui/material/styles';
 import Tooltip, { TooltipProps, tooltipClasses } from '@mui/material/Tooltip';
 import Typography from '@mui/material/Typography';
+import { camelCaseToTitleCase } from '@/utils/formatting';
 
 interface FilterPanelProps {
   open: boolean;
@@ -66,15 +67,6 @@ const FilterPanel: React.FC<FilterPanelProps> = ({
   setSearchObject,
   searchObject,
 }) => {
-  const camelCaseToTitleCase = (camelCase: string) => {
-    if (camelCase === '') return camelCase;
-
-    return camelCase
-      .replace(/([A-Z])/g, ' $1')
-      .replace(/^./, (str: string) => str.toUpperCase())
-      .trim();
-  };
-
   const [selectedFilters, setSelectedFilters] = useState<
     Record<string, Array<AutocompleteOption>>
   >({

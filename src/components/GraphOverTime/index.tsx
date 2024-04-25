@@ -1,5 +1,4 @@
 'use client';
-
 import { useEffect, useState } from 'react';
 import { Line } from 'react-chartjs-2';
 import {
@@ -18,6 +17,7 @@ import InputLabel from '@mui/material/InputLabel';
 import MenuItem from '@mui/material/MenuItem';
 import FormControl from '@mui/material/FormControl';
 import Select, { SelectChangeEvent } from '@mui/material/Select';
+import { camelCaseToTitleCase } from '@/utils/formatting';
 
 // Register the required chart components
 ChartJS.register(
@@ -90,6 +90,41 @@ function GraphOverTime() {
     }
   });
 
+  // Sort the metricMap based on start year and start month
+  const sortedMetricMap = new Map(
+    Array.from(metricMap.entries()).sort(([keyA], [keyB]) => {
+      const firstKeyArr = keyA.split('-');
+      const secondKeyArr = keyB.split('-');
+
+      const [startMonthA, startYearA] = firstKeyArr[0].split(' ');
+      const [startMonthB, startYearB] = secondKeyArr[0].split(' ');
+
+      const monthOrder = [
+        'January',
+        'February',
+        'March',
+        'April',
+        'May',
+        'June',
+        'July',
+        'August',
+        'September',
+        'October',
+        'November',
+        'December',
+      ];
+
+      const monthIndexA = monthOrder.indexOf(startMonthA);
+      const monthIndexB = monthOrder.indexOf(startMonthB);
+
+      if (startYearA !== startYearB) {
+        return parseInt(startYearA) - parseInt(startYearB);
+      } else {
+        return monthIndexA - monthIndexB;
+      }
+    })
+  );
+
   return (
     <>
       {/* Metric selection dropdown */}
@@ -99,7 +134,7 @@ function GraphOverTime() {
           <Select value={selectedMetric} label="Metric" onChange={handleChange}>
             {metrics.map((metric) => (
               <MenuItem key={metric} value={metric}>
-                {metric}
+                {camelCaseToTitleCase(metric)}
               </MenuItem>
             ))}
           </Select>
@@ -109,11 +144,11 @@ function GraphOverTime() {
       {/* Line chart */}
       <Line
         data={{
-          labels: Array.from(metricMap.keys()),
+          labels: Array.from(sortedMetricMap.keys()),
           datasets: [
             {
-              label: selectedMetric,
-              data: Array.from(metricMap.values()),
+              label: camelCaseToTitleCase(selectedMetric),
+              data: Array.from(sortedMetricMap.values()),
               fill: false,
               borderColor: 'rgb(75, 192, 192)',
               tension: 0.1,
@@ -126,10 +161,6 @@ function GraphOverTime() {
             legend: {
               position: 'top' as const,
             },
-            // title: {
-            //   display: true,
-            //   text: 'Metric',
-            // },
           },
         }}
       />
