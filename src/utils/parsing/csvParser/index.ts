@@ -78,9 +78,12 @@ export interface CSVReportRow {
 }
 
 export const loadReportCSV = async (
-  filePath: string
+  input: string | File
 ): Promise<CSVReportRow[]> => {
-  const csvFile = fs.readFileSync(filePath, 'utf8');
+  const csvFile =
+    typeof input === 'string'
+      ? fs.readFileSync(input, 'utf8')
+      : await input.text();
   return new Promise((resolve, reject) => {
     Papa.parse(csvFile, {
       header: true,

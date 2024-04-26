@@ -2,7 +2,7 @@ import Report from '@/server/models/Report';
 import Organization from '@/server/models/Organization';
 import Project from '@/server/models/Project';
 import { loadReportCSV, CSVReportRow } from '@/utils/parsing/csvParser';
-import { locations } from '@/utils/constants';
+import { locations, ExpectedCSVInfo } from '@/utils/constants';
 import { capitalize } from '@/utils/formatting';
 import { TimePeriod } from '@/utils/types/models';
 
@@ -202,4 +202,60 @@ export const importCSVReport = async (filePath: string) => {
 
     await createReport(item, orgId, projectId, periodStart, periodEnd);
   }
+};
+
+export const validateImportCSV = async (file: File) => {
+  const expectedHeaders = Array.from(ExpectedCSVInfo.keys());
+  const data = await loadReportCSV(file);
+  const validationErrors = new Set<string>();
+
+  // Get the CSV Headers and row values.
+  const csvHeaders = Object.keys(data[0]);
+  const csvRowValues = data.filter((row) => {
+    const values = Object.values(row);
+    return values.some((val) => val !== '' && val !== null && val !== ' ');
+  });
+
+  /* VERIFY HEADERS */
+  // Verify all headers are present within the csv file & there are no extra headers.
+  for (const header of expectedHeaders) {
+    if (!csvHeaders.includes(header)) {
+      validationErrors.add(`- MISSING COLUMN HEADER: '${header}'`);
+    }
+  }
+
+  // Verify there are no extra header values.
+  for (const header of csvHeaders) {
+    if (!expectedHeaders.includes(header) && header !== '') {
+      validationErrors.add(`- EXTRA COLUMN HEADER IS PRESENT: '${header}'`);
+    }
+  }
+
+  /* VERIFY VALUES */
+  for (const row of csvRowValues) {
+    for (const val of Object.values(row)) {
+      // Get the column name for the value.
+      const column = Object.keys(data[0])[Object.values(row).indexOf(val)];
+
+      // Check if the value is empty and if it is for a required column. Then check if the value is too long based on its defined max length.
+      if ((val === '' || val === ' ') && ExpectedCSVInfo.has(column)) {
+        validationErrors.add(
+          ` - THE VALUE FOR COLUMN  '${column}'  at ROW '${csvRowValues.indexOf(row) + 2}'  IS EMPTY`
+        );
+      } else {
+        const expectedInfo = ExpectedCSVInfo.get(column);
+        if (expectedInfo && expectedInfo[1]) {
+          if (val.length > expectedInfo[1]) {
+            validationErrors.add(
+              `- THE VALUE FOR COLUMN  '${column}'  at ROW: '${csvRowValues.indexOf(row) + 2}' IS TOO LONG`
+            );
+          }
+        }
+      }
+    }
+  }
+
+  return validationErrors.size > 0
+    ? JSON.stringify(Array.from(validationErrors))
+    : null;
 };
