@@ -1,6 +1,8 @@
 'use client';
 import React, { useEffect, useState } from 'react';
 import { FilterPanelAutocomplete } from '@/components/FilterPanel/FilterPanelAutocomplete';
+import ReportComponent from '@/components/CategoryTable/';
+import Grid from '@mui/material/Grid';
 
 interface OrganizationRow {
   id: string;
@@ -13,18 +15,24 @@ interface ProjectRow {
   organizationId: string;
 }
 
+interface SelectedFilters {
+  organizations: string[];
+  allOrganizations: boolean;
+  projects: string[];
+  allProjects: boolean;
+}
+
 const AnalyticsPage = () => {
   const [organizations, setOrganizations] = useState<OrganizationRow[]>([]);
   const [projects, setProjects] = useState<ProjectRow[]>([]);
   const [projectOptions, setProjectOptions] = useState<ProjectRow[]>([]);
 
   // State to keep track of selected filters
-  const [selectedFilters, setSelectedFilters] = useState<{
-    organizations: string[];
-    projects: string[];
-  }>({
+  const [selectedFilters, setSelectedFilters] = useState<SelectedFilters>({
     organizations: [],
+    allOrganizations: true,
     projects: [],
+    allProjects: true,
   });
 
   const getOrganizations = async () => {
@@ -66,36 +74,42 @@ const AnalyticsPage = () => {
   // Handles changes to filter options and clears unrelated projects when Organization is changed
   const handleAutocompleteChange = (name: string, value: any[]) => {
     if (name === 'organizations') {
-      const selectedOrgIds = value.map((item) => item.value);
-
-      setSelectedFilters((prevFilters) => ({
-        ...prevFilters,
-        organizations: selectedOrgIds,
-      }));
-
-      if (selectedOrgIds.length > 0) {
-        setSelectedFilters((prevFilters) => ({
-          organizations: selectedOrgIds,
-          projects: prevFilters.projects.filter((projectId) =>
-            projects.some(
-              (project) =>
-                project.id === projectId &&
-                selectedOrgIds.includes(project.organizationId)
-            )
-          ),
-        }));
-      } else {
-        setSelectedFilters((prevFilters) => ({
-          ...prevFilters,
+      const isAllSelected = value.some((item) => item.value === 'all');
+      if (isAllSelected && value.length === 1) {
+        setSelectedFilters({
           organizations: [],
-          projects: prevFilters.projects,
+          allOrganizations: true,
+          projects: [],
+          allProjects: true,
+        });
+      } else {
+        const selectedOrgIds = value
+          .filter((item) => item.value !== 'all')
+          .map((item) => item.value);
+        setSelectedFilters((prev) => ({
+          ...prev,
+          allOrganizations: false,
+          organizations: selectedOrgIds,
         }));
       }
     } else if (name === 'projects') {
-      setSelectedFilters((prevFilters) => ({
-        ...prevFilters,
-        projects: value.map((item) => item.value),
-      }));
+      const isAllSelected = value.some((item) => item.value === 'all');
+      if (isAllSelected && value.length === 1) {
+        setSelectedFilters((prev) => ({
+          ...prev,
+          allProjects: true,
+          projects: [],
+        }));
+      } else {
+        const selectedProjectIds = value
+          .filter((item) => item.value !== 'all')
+          .map((item) => item.value);
+        setSelectedFilters((prev) => ({
+          ...prev,
+          allProjects: false,
+          projects: selectedProjectIds,
+        }));
+      }
     }
   };
 
@@ -109,57 +123,80 @@ const AnalyticsPage = () => {
               proj.organizationId === org.id
           )
         )
-      : organizations.filter((org) =>
-          selectedFilters.organizations.length > 0
-            ? selectedFilters.organizations.includes(org.id)
-            : true
+      : selectedFilters.organizations.length > 0
+        ? organizations.filter((org) =>
+            selectedFilters.organizations.includes(org.id)
+          )
+        : organizations;
+
+  const filteredProjects =
+    selectedFilters.projects.length === 0
+      ? projects
+      : projects.filter((project) =>
+          selectedFilters.projects.includes(project.id)
         );
 
-  const filteredProjects = projects.filter((project) =>
-    selectedFilters.projects.length > 0
-      ? selectedFilters.projects.includes(project.id)
-      : true
-  );
-
   return (
-    <div>
-      <FilterPanelAutocomplete
-        name="organizations"
-        label="Select Organizations"
-        value={selectedFilters.organizations.map((id) => ({
-          label: organizations.find((org) => org.id === id)?.name || '',
-          value: id,
-        }))}
-        handleAutocompleteChange={(event, value) =>
-          handleAutocompleteChange('organizations', value)
-        }
-        options={organizations.map((org) => ({
-          label: org.name,
-          value: org.id,
-        }))}
-        isOptionEqualToValue={(option, value) => option.value === value.value}
-      />
+    <Grid container spacing={2}>
+      <Grid item xs={12} md={6}>
+        <FilterPanelAutocomplete
+          name="organizations"
+          label="Select Organizations"
+          value={
+            selectedFilters.allOrganizations
+              ? [{ label: 'All', value: 'all' }]
+              : selectedFilters.organizations.map((id) => ({
+                  label: organizations.find((org) => org.id === id)?.name || '',
+                  value: id,
+                }))
+          }
+          handleAutocompleteChange={(event, value) =>
+            handleAutocompleteChange('organizations', value)
+          }
+          options={[
+            { label: 'All', value: 'all' },
+            ...organizations.map((org) => ({
+              label: org.name,
+              value: org.id,
+            })),
+          ]}
+          isOptionEqualToValue={(option, value) => option.value === value.value}
+        />
 
-      <FilterPanelAutocomplete
-        name="projects"
-        label="Select Projects"
-        value={selectedFilters.projects.map((id) => ({
-          label: projectOptions.find((proj) => proj.id === id)?.name || '',
-          value: id,
-        }))}
-        handleAutocompleteChange={(event, value) =>
-          handleAutocompleteChange('projects', value)
-        }
-        options={projectOptions.map((proj) => ({
-          label: proj.name,
-          value: proj.id,
-        }))}
-        isOptionEqualToValue={(option, value) => option.value === value.value}
-      />
-
-      <div>
-        {displayedOrganizations.map((org) => (
-          <div key={org.id}>
+        <FilterPanelAutocomplete
+          name="projects"
+          label="Select Projects"
+          value={
+            selectedFilters.allProjects
+              ? [{ label: 'All', value: 'all' }]
+              : selectedFilters.projects.map((id) => ({
+                  label:
+                    projectOptions.find((proj) => proj.id === id)?.name || '',
+                  value: id,
+                }))
+          }
+          handleAutocompleteChange={(event, value) =>
+            handleAutocompleteChange('projects', value)
+          }
+          options={[
+            { label: 'All', value: 'all' },
+            ...projectOptions.map((proj) => ({
+              label: proj.name,
+              value: proj.id,
+            })),
+          ]}
+          isOptionEqualToValue={(option, value) => option.value === value.value}
+        />
+      </Grid>
+      <Grid item xs={12} md={6}>
+        <ReportComponent
+          organizationId={selectedFilters.organizations}
+          projectId={selectedFilters.projects}
+        />
+      </Grid>
+      {displayedOrganizations.map((org) => (
+        <Grid item xs={12} key={org.id}>
+          <div>
             <h2>{org.name}</h2>
             <ul>
               {filteredProjects
@@ -169,9 +206,9 @@ const AnalyticsPage = () => {
                 ))}
             </ul>
           </div>
-        ))}
-      </div>
-    </div>
+        </Grid>
+      ))}
+    </Grid>
   );
 };
 

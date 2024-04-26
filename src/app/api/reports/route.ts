@@ -14,9 +14,31 @@ Usage:
 NOTE: Can include as many fields as needed (comma-separated) but only one projectId and one organizationId at a time.
 */
 
+const categoryFieldMapping: { [key: string]: string[] | undefined } = {
+  Food: [
+    'foodAssistance',
+    'foodKnowledgeAndSkills',
+    'accessToHealthyFoods',
+    'producerSupport',
+  ],
+  Clothing: ['clothingAssistance'],
+  Hygiene: ['hygieneAssistance'],
+  'Health Care': ['healthCareAssistance'],
+  'Mental Health': ['mentalHealthAssistance'],
+  'Child Care': [
+    'childCareBirthToPreK',
+    'childCareBirthToPreKHours',
+    'childCareSchoolAged',
+    'childCareSchoolAgedHours',
+    'subsidiesOrScholarships',
+  ],
+  Housing: ['rentalAssistance', 'utilityAssistance'],
+  Other: ['otherAssistance'],
+};
+
 interface Query {
-  projectId?: string;
-  organizationId?: string;
+  projectId?: string | { $in: string[] };
+  organizationId?: string | { $in: string[] };
 }
 
 interface Projection {
@@ -32,17 +54,33 @@ export async function GET(req: NextRequest) {
 
     if (req) {
       const fields = req.nextUrl.searchParams.get('fields');
-      const projectId = req.nextUrl.searchParams.get('projectId');
-      const organizationId = req.nextUrl.searchParams.get('organizationId');
+      const category = req.nextUrl.searchParams.get('category');
+      const projectIds = req.nextUrl.searchParams.getAll('projectId');
+      const organizationIds = req.nextUrl.searchParams.getAll('organizationId');
+
+      if (category) {
+        projection = projection || {};
+        const categoryFields = categoryFieldMapping[category];
+        if (categoryFields) {
+          categoryFields.forEach((field: string | number) => {
+            projection![field] = 1;
+          });
+        } else {
+          return NextResponse.json(
+            { success: false, error: 'Invalid category' },
+            { status: 400 }
+          );
+        }
+      }
 
       // Add projectId to the query object if provided
-      if (projectId) {
-        query.projectId = projectId;
+      if (projectIds.length > 0) {
+        query.projectId = { $in: projectIds };
       }
 
       // Add organizationId to the query object if provided
-      if (organizationId) {
-        query.organizationId = organizationId;
+      if (organizationIds.length > 0) {
+        query.organizationId = { $in: organizationIds };
       }
 
       // Add fields to the projection object if provided
