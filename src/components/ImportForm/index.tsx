@@ -4,6 +4,7 @@ import { validateImportForm } from '@/utils/validation/importFormValidation';
 import { Box, Button, TextField, Typography } from '@mui/material';
 import { styled } from '@mui/material/styles';
 import CloudUploadIcon from '@mui/icons-material/CloudUpload';
+import ImportInfoModal from '../ImportInfoModal';
 
 interface ImportFormData {
   file: File | null;
@@ -27,6 +28,9 @@ export default function ImportForm() {
   const [fileName, setFileName] = useState('');
   const [submissionSuccess, setSubmissionSuccess] = useState(false);
   const [submissionError, setSubmissionError] = useState(false);
+  const [submissionErrorMessage, setSubmissionErrorMessage] = useState<
+    string[]
+  >([]);
 
   // Handle input change for each form field. If the field is a file, also set the file name.
   const handleInputChange = (
@@ -46,13 +50,13 @@ export default function ImportForm() {
   const submitForm = () => {
     setSubmissionSuccess(false);
     setSubmissionError(false);
+    setSubmissionErrorMessage([]);
 
     const errors = validateImportForm(formData);
 
     // Validate form inputs by checking if there are any errors.
     if (Object.values(errors).some((error) => error !== '')) {
       setValidationErrors(errors);
-      console.log('ERRORS: ', errors);
       return;
     }
 
@@ -88,13 +92,13 @@ export default function ImportForm() {
             setSubmissionSuccess(false);
           }, 5000);
         } else {
-          console.log('Error on submission: ', data.message);
           setSubmissionError(true);
+          setSubmissionErrorMessage(JSON.parse(data.errors));
         }
       })
       .catch((error) => {
-        console.error('Error on submission: ', error);
         setSubmissionError(true);
+        setSubmissionErrorMessage([error.message]);
       });
   };
 
@@ -139,6 +143,7 @@ export default function ImportForm() {
             {validationErrors.file}
           </Typography>
         )}
+        <br />
         {{ fileName } && (
           <Typography variant="subtitle1">{fileName}</Typography>
         )}
@@ -204,15 +209,26 @@ export default function ImportForm() {
         >
           Submit
         </Button>
+        <br />
+        <ImportInfoModal />
+        <br />
         {submissionSuccess && (
           <Typography variant="subtitle1" style={{ color: 'green' }}>
             Upload Successful
           </Typography>
         )}
         {submissionError && (
-          <Typography variant="subtitle1" style={{ color: 'red' }}>
-            Error on submission. Please try again...
-          </Typography>
+          <Box textAlign={'left'}>
+            {submissionErrorMessage.map((error, index) => (
+              <Typography
+                key={index}
+                variant="subtitle2"
+                style={{ color: 'red' }}
+              >
+                {error}
+              </Typography>
+            ))}
+          </Box>
         )}
       </Box>
     </OuterBox>
@@ -235,6 +251,6 @@ const OuterBox = styled(Box)({
   backgroundColor: '#f0f0f0',
   padding: '15px',
   margin: 'auto',
-  maxWidth: '600px',
+  maxWidth: '700px',
   marginTop: '20px',
 });
