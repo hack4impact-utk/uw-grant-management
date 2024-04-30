@@ -1,4 +1,8 @@
 import mongoose from 'mongoose';
+import dotenv from 'dotenv';
+dotenv.config();
+
+require('../server/models');
 
 const MONGODB_URI = process.env.MONGODB_URI;
 
@@ -48,7 +52,6 @@ async function dbConnect(): Promise<mongoose.Mongoose> {
     throw e;
   }
 
-  // return connection
   return cached.conn;
 }
 
