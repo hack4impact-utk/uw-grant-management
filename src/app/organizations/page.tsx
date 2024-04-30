@@ -1,7 +1,7 @@
 'use client';
 import { ChangeEvent, useCallback, useEffect, useState } from 'react';
 import OrganizationAccordion from '@/components/OrganizationAccordion';
-import { OrganizationDocument as OrganizationType } from '@/server/models/Organization';
+import { Organization } from '@/utils/types/models';
 import LoadingBox from '@/components/LoadingBox';
 import InputAdornment from '@mui/material/InputAdornment';
 import { Search } from '@mui/icons-material';
@@ -10,7 +10,7 @@ import debounce from 'lodash.debounce';
 
 function OrganizationsPage() {
   // State variables
-  const [organizations, setOrganizations] = useState<OrganizationType[]>([]);
+  const [organizations, setOrganizations] = useState<Organization[]>([]);
   const [isLoading, setIsLoading] = useState(true); // Indicates data loading state
   const [searchTerm, setSearchTerm] = useState('');
 
@@ -59,11 +59,10 @@ function OrganizationsPage() {
       maxWidth={false}
       sx={{
         width: '95vw',
-        boxShadow: '0px 4px 20px rgba(0, 0, 0, 0.3)',
-        paddingTop: '.1rem',
+        paddingTop: '1rem',
         paddingBottom: '1rem',
-        height: 'fit-content',
-        marginTop: '1rem',
+        height: '100%',
+        boxSizing: 'border-box',
       }}
     >
       <Box
@@ -98,7 +97,7 @@ function OrganizationsPage() {
       </Box>
       <Box
         sx={{
-          height: '80vh',
+          height: '75vh',
           overflowY: 'auto',
           padding: '12px',
           backgroundColor: 'hsl(0, 0%, 90.2%)',

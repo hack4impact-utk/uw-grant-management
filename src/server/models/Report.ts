@@ -1,4 +1,4 @@
-import { Model, Document, Schema, model, models } from 'mongoose';
+import { Model, Document, Schema, model, models, Types } from 'mongoose';
 import { Report } from '@/utils/types/models';
 import { zipCodes, months, locations } from '@/utils/constants';
 
@@ -376,7 +376,13 @@ const ReportSchema = new Schema(
   }
 );
 
-export interface ReportDocument extends Omit<Report, '_id'>, Document {}
+interface MongooseReportAttributes extends Omit<Report, 'id'> {
+  _id: Types.ObjectId;
+}
+
+export interface ReportDocument extends MongooseReportAttributes, Document {
+  _id: Types.ObjectId; // Ensuring the _id type is consistent
+}
 
 export default (models.Report as Model<ReportDocument>) ||
   model<ReportDocument>('Report', ReportSchema);

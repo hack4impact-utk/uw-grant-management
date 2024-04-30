@@ -38,7 +38,7 @@ export function FilterPanelAutocomplete({
       options={options}
       getOptionLabel={(option) => option.label}
       isOptionEqualToValue={isOptionEqualToValue}
-      sx={{ width: 300, mt: 2 }}
+      sx={{ width: 300, mt: 2, ml: 2 }}
       renderOption={(props, option) => {
         return (
           <li {...props} key={option.label}>

@@ -208,9 +208,16 @@ export const validateImportCSV = async (file: File) => {
   const expectedHeaders = Array.from(ExpectedCSVInfo.keys());
   const data = await loadReportCSV(file);
   const validationErrors = new Set<string>();
+  const autoRemovedHeaders = ['__parsed_extra'];
 
   // Get the CSV Headers and row values.
-  const csvHeaders = Object.keys(data[0]);
+  const csvHeaders = Array.from(Object.keys(data[0]));
+  for (const header of autoRemovedHeaders) {
+    while (csvHeaders.includes(header)) {
+      csvHeaders.splice(csvHeaders.indexOf(header), 1);
+    }
+  }
+  console.log(csvHeaders);
   const csvRowValues = data.filter((row) => {
     const values = Object.values(row);
     return values.some((val) => val !== '' && val !== null && val !== ' ');

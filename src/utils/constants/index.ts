@@ -1,3 +1,26 @@
+export const primaryMetrics = [
+  'amountAwarded',
+  'clientsServed',
+  'jobsCreated',
+  'partners',
+  'foodAssistance',
+  'foodKnowledgeAndSkills',
+  'accessToHealthyFoods',
+  'producerSupport',
+  'clothingAssistance',
+  'hygieneAssistance',
+  'healthCareAssistance',
+  'mentalHealthAssistance',
+  'childCareBirthToPreK',
+  'childCareBirthToPreKHours',
+  'childCareSchoolAged',
+  'childCareSchoolAgedHours',
+  'subsidiesOrScholarships',
+  'rentalAssistance',
+  'utilityAssistance',
+  'otherAssistance',
+];
+
 export const locations = [
   'Knoxville',
   'Corryton',

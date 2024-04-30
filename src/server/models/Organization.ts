@@ -1,4 +1,4 @@
-import { Model, Document, Schema, model, models } from 'mongoose';
+import { Model, Document, Schema, model, models, Types } from 'mongoose';
 import { Organization } from '@/utils/types/models';
 
 const OrganizationSchema = new Schema(
@@ -20,10 +20,15 @@ const OrganizationSchema = new Schema(
   }
 );
 
-export interface OrganizationDocument
-  extends Omit<Organization, '_id'>,
-    Document {}
+interface MongooseOrganizationAttributes extends Omit<Organization, 'id'> {
+  _id: Types.ObjectId;
+}
 
-// Corrected to check models.Organization instead of models.Member
+export interface OrganizationDocument
+  extends MongooseOrganizationAttributes,
+    Document {
+  _id: Types.ObjectId; // Ensuring the _id type is consistent
+}
+
 export default (models.Organization as Model<OrganizationDocument>) ||
   model<OrganizationDocument>('Organization', OrganizationSchema);

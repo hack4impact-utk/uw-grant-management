@@ -8,6 +8,7 @@ import { styled } from '@mui/material/styles';
 import Tooltip, { TooltipProps, tooltipClasses } from '@mui/material/Tooltip';
 import Typography from '@mui/material/Typography';
 import { camelCaseToTitleCase } from '@/utils/formatting';
+import { primaryMetrics } from '@/utils/constants';
 
 interface FilterPanelProps {
   open: boolean;
@@ -74,27 +75,14 @@ const FilterPanel: React.FC<FilterPanelProps> = ({
     metrics: [],
   });
 
-  const [metricsOptions, setMetricsOptions] = useState<AutocompleteOption[]>(
-    []
-  );
+  const metricsOptions = primaryMetrics.map((metric) => ({
+    label: camelCaseToTitleCase(metric),
+    value: metric,
+  }));
 
   const [organizationsOptions, setOrganizationsOptions] = useState<
     AutocompleteOption[]
   >([]);
-
-  const getMetrics = async () => {
-    const response = await fetch('/api/metrics/');
-    if (!response.ok) {
-      throw new Error('Failed to fetch metrics data');
-    }
-    const data = await response.json();
-    setMetricsOptions(
-      data.metrics.map((key: string) => ({
-        label: camelCaseToTitleCase(key),
-        value: key,
-      }))
-    );
-  };
 
   const getOrganizations = async () => {
     const response = await fetch('/api/organizations/');
@@ -128,7 +116,6 @@ const FilterPanel: React.FC<FilterPanelProps> = ({
   };
 
   useEffect(() => {
-    getMetrics();
     getOrganizations();
   }, []);
 

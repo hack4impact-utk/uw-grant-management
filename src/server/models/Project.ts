@@ -1,4 +1,4 @@
-import { Model, Document, Schema, model, models } from 'mongoose';
+import { Model, Document, Schema, model, models, Types } from 'mongoose';
 import { Project } from '@/utils/types/models';
 
 const ProjectSchema = new Schema(
@@ -25,6 +25,13 @@ const ProjectSchema = new Schema(
   }
 );
 
-export interface ProjectDocument extends Omit<Project, '_id'>, Document {}
+interface MongooseProjectAttributes extends Omit<Project, 'id'> {
+  _id: Types.ObjectId;
+}
+
+export interface ProjectDocument extends MongooseProjectAttributes, Document {
+  _id: Types.ObjectId; // Ensuring the _id type is consistent
+}
+
 export default (models.Project as Model<ProjectDocument>) ||
   model<ProjectDocument>('Project', ProjectSchema);

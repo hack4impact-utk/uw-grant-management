@@ -10,3 +10,7 @@ export function camelCaseToTitleCase(camelCase: string): string {
     .replace(/^./, (str: string) => str.toUpperCase())
     .trim();
 }
+
+export function numberWithCommas(x: number) {
+  return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+}

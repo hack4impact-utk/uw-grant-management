@@ -1,6 +1,7 @@
 import type { Metadata } from 'next';
 import { Inter } from 'next/font/google';
 import AuthProvider from '../components/AuthProvider';
+import Box from '@mui/material/Box';
 import Navbar from '@/components/Navbar';
 import '../assets/css/layout.css';
 
@@ -33,7 +34,16 @@ export default async function RootLayout({
       <body className={inter.className}>
         <AuthProvider>
           <Navbar />
-          {children}
+          <Box
+            sx={{
+              margin: '0',
+              height: '100vh',
+              boxSizing: 'border-box',
+              paddingTop: '5rem',
+            }}
+          >
+            {children}
+          </Box>
         </AuthProvider>
       </body>
     </html>

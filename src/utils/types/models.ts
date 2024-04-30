@@ -1,17 +1,9 @@
 import { z } from 'zod';
-import {
-  zipCodes,
-  locations,
-  unitedWayFocusAreas,
-  focusAreaIndicators,
-} from '../constants';
+import { zipCodes, locations } from '../constants';
 
 // const monthsEnum = z.enum(months);
 const zipCodesEnum = z.enum(zipCodes);
 const locationsEnum = z.enum(locations);
-const focusAreasEnum = z.enum(unitedWayFocusAreas);
-
-const focusAreasIndicatorsEnum = z.enum(focusAreaIndicators);
 
 export const TimePeriodSchema = z.object({
   month: z.string(),
@@ -73,16 +65,8 @@ const demographicsEnum = z.enum([
   'Age',
 ]);
 
-const IndicatorSchema = z.object({
-  category: focusAreasEnum,
-  number: z.number(),
-  goal: z.number(),
-  indicator: focusAreasIndicatorsEnum,
-  clientsServed: z.number(),
-  successfulClientsServied: z.number(),
-});
-
 const ReportSchema = z.object({
+  id: z.string(),
   periodStart: TimePeriodSchema,
   periodEnd: TimePeriodSchema,
   organizationId: z.string(), // Assuming ObjectId is represented as string in Zod
@@ -116,32 +100,18 @@ const ReportSchema = z.object({
   clientsServedByAge: ClientAgeSchema,
 });
 
-const TwelveMonthReportSchema = z.object({
-  periodStart: TimePeriodSchema,
-  periodEnd: TimePeriodSchema,
-  organizationId: z.string(), // Assuming ObjectId is represented as string in Zod
-  clientsServed: z.number(),
-  indicators: z.array(IndicatorSchema),
-  reportedDemographics: z.array(demographicsEnum),
-  zipCodeClientsServed: z.array(ZipCodeClientsServedSchema),
-  clientsServedBySex: ClientsSexSchema,
-  clientsServedByRace: ClientsRaceSchema,
-  clientsServedByEthnicity: ClientEthnicitySchema,
-  clientsServedByHouseholdIncome: ClientHouseholdIncomeSchema,
-  clientsServedByAge: ClientAgeSchema,
-});
-
 const OrganizationSchema = z.object({
+  id: z.string(),
   name: z.string(),
 });
 
 const ProjectSchema = z.object({
+  id: z.string(),
   organizationId: z.string(),
   name: z.string(),
 });
 
 export type Report = z.infer<typeof ReportSchema>;
-export type TwelveMonthReport = z.infer<typeof TwelveMonthReportSchema>;
 export type Organization = z.infer<typeof OrganizationSchema>;
 export type Project = z.infer<typeof ProjectSchema>;
 export type TimePeriod = z.infer<typeof TimePeriodSchema>;

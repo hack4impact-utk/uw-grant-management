@@ -6,18 +6,16 @@ import Typography from '@mui/material/Typography';
 //import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import AddIcon from '@mui/icons-material/Add';
 import RemoveIcon from '@mui/icons-material/Remove';
-
-import { OrganizationDocument as OrganizationType } from '@/server/models/Organization';
-import { ProjectDocument as ProjectType } from '@/server/models/Project';
-import { ReportDocument as ReportType } from '@/server/models/Report';
-import { theme } from '../../utils/constants/themes';
+import { Report, Project, Organization } from '@/utils/types/models';
+import theme from '@/utils/constants/themes';
+import Button from '@mui/material/Button';
 
 function OrganizationAccordion({
   organization,
 }: {
-  organization: OrganizationType;
+  organization: Organization;
 }) {
-  const [projects, setProjects] = useState<ProjectType[]>([]);
+  const [projects, setProjects] = useState<Project[]>([]);
   const [isOpen, setOpen] = useState(false);
   const projectsCached = useRef<boolean>(false);
 
@@ -48,7 +46,8 @@ function OrganizationAccordion({
       style={{
         borderRadius: '2px',
         color: 'black',
-        backgroundColor: theme.primaryYellowRGBA(50),
+        backgroundColor: theme.primaryGrayHsl(85),
+        width: '100%',
       }}
     >
       <AccordionSummary
@@ -68,16 +67,39 @@ function OrganizationAccordion({
           )
         }
         onClick={fetchProjects}
-        style={{
+        sx={{
           borderRadius: '2px',
           border: `1px solid ${theme.whiteRGBA(40)}`,
           color: 'white',
           backgroundColor: theme.primaryBlue,
+          display: 'flex',
+          justifyContent: 'space-between',
+          width: '100%',
         }}
       >
-        <Typography>
-          <strong>{organization.name}</strong>
+        <Typography
+          sx={{
+            maxWidth: '100%',
+            overflowY: 'auto',
+          }}
+        >
+          <strong>{organization.name}</strong>{' '}
         </Typography>
+        <Button
+          href={`/analytics?organizationId=${organization.id}`}
+          variant="contained"
+          size="small"
+          disableElevation
+          sx={{
+            position: 'absolute',
+            right: 50,
+            top: '50%',
+            transform: 'translateY(-50%)',
+            backgroundColor: theme.primaryGrayHsl(50),
+          }}
+        >
+          View Analytics
+        </Button>
       </AccordionSummary>
       <AccordionDetails>
         <Typography
@@ -100,8 +122,8 @@ function OrganizationAccordion({
   );
 }
 
-function ProjectAccordion({ project }: { project: ProjectType }) {
-  const [clientsServed, setClientsServed] = useState<ReportType[]>([]);
+function ProjectAccordion({ project }: { project: Project }) {
+  const [clientsServed, setClientsServed] = useState<Report[]>([]);
   const [isOpen, setOpen] = useState(false);
   const clientsServedCached = useRef<boolean>(false);
 
@@ -132,6 +154,7 @@ function ProjectAccordion({ project }: { project: ProjectType }) {
         color: 'black',
         backgroundColor: 'white',
         borderRadius: `4px`,
+        margin: '.5rem',
       }}
     >
       <AccordionSummary
@@ -141,12 +164,27 @@ function ProjectAccordion({ project }: { project: ProjectType }) {
           borderRadius: `4px 4px ${isOpen ? '0px 0px ' : '4px 4px'}`,
           transition: 'border-radius 300ms',
           color: theme.whiteRGBA(90),
-          backgroundColor: theme.primaryBlueRGBA(85),
+          backgroundColor: theme.primaryBlueRGBA(90),
         }}
       >
         <Typography>
           <strong>{project.name}</strong>
         </Typography>
+        <Button
+          href={`/analytics?organizationId=${project.organizationId}&projectId=${project.id}`}
+          variant="contained"
+          size="small"
+          disableElevation
+          sx={{
+            position: 'absolute',
+            right: 50,
+            top: '50%',
+            transform: 'translateY(-50%)',
+            backgroundColor: theme.primaryGrayHsl(50),
+          }}
+        >
+          View Analytics
+        </Button>
       </AccordionSummary>
       <AccordionDetails>
         {clientsServed.length === 0 ? (
