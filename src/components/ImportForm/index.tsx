@@ -87,14 +87,14 @@ export default function ImportForm() {
           if (data.success) {
             setSubmissionSuccess(true);
 
-            // setFormData({
-            //   file: null,
-            //   startYear: '',
-            //   startMonth: '',
-            //   endYear: '',
-            //   endMonth: '',
-            // });
-            // setFileName('');
+            setFormData({
+              file: null,
+              startYear: '',
+              startMonth: '',
+              endYear: '',
+              endMonth: '',
+            });
+            setFileName('');
 
             // Set timeout just to show the success message for a few seconds.
             setTimeout(() => {
