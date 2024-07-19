@@ -101,7 +101,7 @@ export default function Map({ searchObject }: MapProps) {
 
   const getStyle: StyleFunction<any> = (feature) => {
     const zipCode = feature?.properties.ZCTA5CE10;
-    const clientServed = zipCodeData[zipCode].clientsServed || 0;
+    const clientServed = zipCodeData[zipCode]?.clientsServed || 0;
     const fillColor = getColor(clientServed);
 
     return {
@@ -164,15 +164,15 @@ export default function Map({ searchObject }: MapProps) {
                 <br />
                 <p>
                   Total Clients Served:{' '}
-                  {zipCodeData[hoveredZipCode].clientsServed}
+                  {zipCodeData[hoveredZipCode]?.clientsServed || 0}
                 </p>
                 <p>
                   Total Organizations:{' '}
-                  {zipCodeData[hoveredZipCode].totalOrganizationsPresent}
+                  {zipCodeData[hoveredZipCode]?.totalOrganizationsPresent || 0}
                 </p>
                 <p>
                   Total Projects:{' '}
-                  {zipCodeData[hoveredZipCode].totalProjectsPresent}
+                  {zipCodeData[hoveredZipCode]?.totalProjectsPresent || 0}
                 </p>
               </CardContent>
             </Card>
@@ -194,7 +194,7 @@ export default function Map({ searchObject }: MapProps) {
           >
             <Box
               sx={{
-                marginTop: '1rem',
+                marginTop: '2rem',
               }}
             >
               <Typography

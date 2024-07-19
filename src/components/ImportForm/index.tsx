@@ -1,10 +1,18 @@
 'use client';
 import { useState } from 'react';
 import { validateImportForm } from '@/utils/validation/importFormValidation';
-import { Box, Button, TextField, Typography } from '@mui/material';
+import {
+  Box,
+  Button,
+  Divider,
+  Grid,
+  TextField,
+  Typography,
+} from '@mui/material';
 import { styled } from '@mui/material/styles';
 import CloudUploadIcon from '@mui/icons-material/CloudUpload';
 import ImportInfoModal from '../ImportInfoModal';
+import { useConfirm } from 'material-ui-confirm';
 
 interface ImportFormData {
   file: File | null;
@@ -31,6 +39,7 @@ export default function ImportForm() {
   const [submissionErrorMessage, setSubmissionErrorMessage] = useState<
     string[]
   >([]);
+  const confirm = useConfirm();
 
   // Handle input change for each form field. If the field is a file, also set the file name.
   const handleInputChange = (
@@ -69,33 +78,42 @@ export default function ImportForm() {
     formInputData.append('endMonth', formData.endMonth as string);
 
     // API Call to submit the form data.
-    fetch('/api/import', {
+    fetch('/api/report-submissions', {
       method: 'POST',
       body: formInputData,
     })
-      .then((response) => response.json())
-      .then((data) => {
-        if (data.success) {
-          setSubmissionSuccess(true);
+      .then((response) =>
+        response.json().then((data) => {
+          if (data.success) {
+            setSubmissionSuccess(true);
 
-          setFormData({
-            file: null,
-            startYear: '',
-            startMonth: '',
-            endYear: '',
-            endMonth: '',
-          });
-          setFileName('');
+            // setFormData({
+            //   file: null,
+            //   startYear: '',
+            //   startMonth: '',
+            //   endYear: '',
+            //   endMonth: '',
+            // });
+            // setFileName('');
 
-          // Set timeout just to show the success message for a few seconds.
-          setTimeout(() => {
-            setSubmissionSuccess(false);
-          }, 5000);
-        } else {
-          setSubmissionError(true);
-          setSubmissionErrorMessage(JSON.parse(data.errors));
-        }
-      })
+            // Set timeout just to show the success message for a few seconds.
+            setTimeout(() => {
+              setSubmissionSuccess(false);
+            }, 5000);
+          } else {
+            if (response.status == 409) {
+              confirm({
+                title: 'Report Submission Failed',
+                description: data.message,
+                hideCancelButton: true,
+              });
+              return;
+            }
+            setSubmissionError(true);
+            setSubmissionErrorMessage([data.message]);
+          }
+        })
+      )
       .catch((error) => {
         setSubmissionError(true);
         setSubmissionErrorMessage([error.message]);
@@ -148,57 +166,85 @@ export default function ImportForm() {
           <Typography variant="subtitle1">{fileName}</Typography>
         )}
         <br />
-        <TextField
-          label="Reporting Period Start Year"
-          placeholder="YYYY"
-          variant="outlined"
-          margin="normal"
-          onChange={(e) => handleInputChange('startYear', e.target.value)}
-          value={formData.startYear || ''}
-          error={!!validationErrors.startYear}
-          helperText={validationErrors.startYear}
-          style={{ width: '75%' }}
-          required
-        />
-
-        <TextField
-          label="Reporting Period Start Month"
-          placeholder="Month"
-          variant="outlined"
-          margin="normal"
-          onChange={(e) => handleInputChange('startMonth', e.target.value)}
-          error={!!validationErrors.startMonth}
-          helperText={validationErrors.startMonth}
-          value={formData.startMonth || ''}
-          style={{ width: '75%' }}
-          required
-        />
-
-        <TextField
-          label="Reporting Period End Year"
-          placeholder="YYYY"
-          variant="outlined"
-          margin="normal"
-          onChange={(e) => handleInputChange('endYear', e.target.value)}
-          error={!!validationErrors.endYear}
-          helperText={validationErrors.endYear}
-          value={formData.endYear || ''}
-          style={{ width: '75%' }}
-          required
-        />
-
-        <TextField
-          label="Reporting Period End Month"
-          placeholder="Month"
-          variant="outlined"
-          margin="normal"
-          onChange={(e) => handleInputChange('endMonth', e.target.value)}
-          error={!!validationErrors.endMonth}
-          helperText={validationErrors.endMonth}
-          value={formData.endMonth || ''}
-          style={{ width: '75%' }}
-          required
-        />
+        <Grid
+          container
+          spacing={3}
+          direction="row"
+          justifyContent="center"
+          alignItems="center"
+        >
+          <Grid item xs={12} container>
+            <Grid item xs={12}>
+              <Typography variant="h6">Reporting Period Start</Typography>
+            </Grid>
+            <Grid item xs={8}>
+              <TextField
+                label="Month"
+                placeholder="Month"
+                variant="standard"
+                margin="normal"
+                onChange={(e) =>
+                  handleInputChange('startMonth', e.target.value)
+                }
+                error={!!validationErrors.startMonth}
+                helperText={validationErrors.startMonth}
+                value={formData.startMonth || ''}
+                sx={{ width: '100%' }}
+                required
+              />
+            </Grid>
+            <Grid item xs={4}>
+              <TextField
+                label="Year"
+                placeholder="YYYY"
+                variant="standard"
+                margin="normal"
+                onChange={(e) => handleInputChange('startYear', e.target.value)}
+                value={formData.startYear || ''}
+                error={!!validationErrors.startYear}
+                helperText={validationErrors.startYear}
+                sx={{ width: '100%' }}
+                required
+              />
+            </Grid>
+          </Grid>
+          <Grid item xs={12}>
+            <Divider />
+          </Grid>
+          <Grid item xs={12} container>
+            <Grid item xs={12}>
+              <Typography variant="h6">Reporting Period Start</Typography>
+            </Grid>
+            <Grid item xs={8}>
+              <TextField
+                label="Month"
+                placeholder="Month"
+                variant="standard"
+                margin="normal"
+                onChange={(e) => handleInputChange('endMonth', e.target.value)}
+                error={!!validationErrors.endMonth}
+                helperText={validationErrors.endMonth}
+                value={formData.endMonth || ''}
+                sx={{ width: '100%' }}
+                required
+              />
+            </Grid>
+            <Grid item xs={4}>
+              <TextField
+                label="Year"
+                placeholder="YYYY"
+                variant="standard"
+                margin="normal"
+                onChange={(e) => handleInputChange('endYear', e.target.value)}
+                error={!!validationErrors.endYear}
+                helperText={validationErrors.endYear}
+                value={formData.endYear || ''}
+                sx={{ width: '100%' }}
+                required
+              />
+            </Grid>
+          </Grid>
+        </Grid>
         <br />
         <Button
           variant="contained"

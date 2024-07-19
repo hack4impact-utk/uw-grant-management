@@ -1,4 +1,4 @@
-import { CSVReportRow } from '@/utils/parsing/csvParser';
+import { CSVReportRow } from '@/utils/types/models';
 import { OrganizationProjects } from '@/utils/constants';
 import fs from 'fs';
 
@@ -13,7 +13,7 @@ function writeToCSVFile(reportData: CSVReportRow, fileName: string) {
   // Handle edge case where some organization names contain a comma. Need to ensure they are not split into separate columns.
   const csvString =
     Object.values(reportData)
-      .map((val) => {
+      .map((val: string) => {
         if (val.includes(',') || val.includes('"')) {
           return `"${val.replace(/"/g, '""')}"`;
         }
@@ -330,7 +330,7 @@ function generateFakeReportData(orgName: string, projName: string) {
     ['Rental Assistance']: assistanceValues.rentalAssistance.toString(),
     ['Utility Assistance']: assistanceValues.utilityAssistance.toString(),
     ['Other Assistance']: assistanceValues.otherAssistance.toString(),
-    ['Attraction and Retention']: '0',
+    ['Attraction and Retention']: 'N/A',
     ['Corryton 37721']: zipCodeValues[0].toString(),
     ['Farragut 37934']: zipCodeValues[1].toString(),
     ['Heiskell 37754']: zipCodeValues[2].toString(),

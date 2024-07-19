@@ -1,12 +1,13 @@
 import dbConnect from '@/utils/db-connect';
 import { NextResponse, NextRequest } from 'next/server';
 import Project from '@/server/models/Project';
+import { withAuth } from '@/utils/auth';
 
 interface Query {
   organizationId?: string;
 }
 
-export async function GET(req: NextRequest) {
+export const GET = withAuth(async function (req: NextRequest) {
   await dbConnect();
 
   try {
@@ -31,4 +32,4 @@ export async function GET(req: NextRequest) {
       { status: 500 }
     );
   }
-}
+});

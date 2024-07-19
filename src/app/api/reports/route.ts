@@ -1,6 +1,7 @@
 import dbConnect from '@/utils/db-connect';
 import { NextResponse, NextRequest } from 'next/server';
 import Report from '@/server/models/Report';
+import { withAuth } from '@/utils/auth';
 interface Query {
   projectId?: string | { $in: string[] };
   organizationId?: string | { $in: string[] };
@@ -10,7 +11,7 @@ interface Projection {
   [key: string]: number;
 }
 
-export async function GET(req: NextRequest) {
+export const GET = withAuth(async function (req: NextRequest) {
   await dbConnect();
 
   try {
@@ -57,4 +58,4 @@ export async function GET(req: NextRequest) {
       { status: 500 }
     );
   }
-}
+});

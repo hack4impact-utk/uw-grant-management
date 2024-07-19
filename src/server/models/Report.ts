@@ -182,6 +182,12 @@ const ClientAgeSchema = new Schema(
 
 const ReportSchema = new Schema(
   {
+    reportSubmissionId: {
+      type: Schema.Types.ObjectId,
+      ref: 'ReportSubmission',
+      required: true,
+    },
+
     organizationId: {
       type: Schema.Types.ObjectId,
       ref: 'Organization',
@@ -363,6 +369,10 @@ const ReportSchema = new Schema(
     clientsServedByEthnicity: ClientEthnicitySchema,
     clientsServedByHouseholdIncome: ClientHouseholdIncomeSchema,
     clientsServedByAge: ClientAgeSchema,
+    attractionAndRetention: {
+      type: String,
+      required: true,
+    },
   },
   {
     toObject: {

@@ -267,272 +267,293 @@ export const OrganizationProjects: [string, string][] = [
 ];
 // Column name, description, and character limit
 export const ExpectedCSVInfo = new Map<string, [string, string]>([
-  ['Organization Name', ['Name of the organization', '']],
-  ['Project Name', ['Name of the project', '100']],
-  ['Amount Awarded', ['The total amount awarded', '20']],
+  ['Organization Name', ['Name of the organization', 'text']],
+  ['Project Name', ['Name of the project', 'text']],
+  ['Amount Awarded', ['The total amount awarded', 'number']],
+  [
+    'Attraction and Retention',
+    [
+      'If possible, define or describe how these funds affected attraction or retention of staff or families served',
+      'text',
+    ],
+  ],
   [
     'Clients Served',
-    ['Total of clients served by this grant in the reporting period', '7'],
+    ['Total of clients served by this grant in the reporting period', 'number'],
   ],
-  ['Jobs Created', ['Number of jobs created', '7']],
+  ['Jobs Created', ['Number of jobs created', 'number']],
   [
     'Partners',
-    ['Number of organizations that collaborated on this project', '7'],
+    ['Number of organizations that collaborated on this project', 'number'],
   ],
   [
     'Food Assistance',
-    ['Number of individuals provided with food assistance', '7'],
+    ['Number of individuals provided with food assistance', 'number'],
   ],
   [
     'Food Knowledge and Skills',
-    ['Number of individuals with increased food knowledge and skills', '7'],
+    [
+      'Number of individuals with increased food knowledge and skills',
+      'number',
+    ],
   ],
   [
     'Access to Healthy Foods',
-    ['Number of individuals with increased access to healthy food', '7'],
+    ['Number of individuals with increased access to healthy food', 'number'],
   ],
   [
     'Producer Support',
-    ['Number of regional farmers, growers, or gardeners supported', '7'],
+    ['Number of regional farmers, growers, or gardeners supported', 'number'],
   ],
   [
     'Clothing Assistance',
-    ['Number of individuals provided with clothing assistance', '7'],
+    ['Number of individuals provided with clothing assistance', 'number'],
   ],
   [
     'Hygiene Assistance',
-    ['Number of individuals provided with hygiene assistance', '7'],
+    ['Number of individuals provided with hygiene assistance', 'number'],
   ],
   [
     'Health Care Assistance',
-    ['Number of individuals provided with health care assistance', '7'],
+    ['Number of individuals provided with health care assistance', 'number'],
   ],
   [
     'Mental Health Assistance',
-    ['Number of individuals provided with mental health assistance', '7'],
+    ['Number of individuals provided with mental health assistance', 'number'],
   ],
   [
     'Child Care BirthPreK',
-    ['Number of birth through PreK aged children provided child care', '7'],
+    [
+      'Number of birth through PreK aged children provided child care',
+      'number',
+    ],
   ],
   [
     'Child Care BirthPreK Hours',
     [
       'Total number of child care hours provided for birth through PreK aged children',
-      '7',
+      'number',
     ],
   ],
   [
     'Child Care School Age',
-    ['Number of school aged children provided child care', '7'],
+    ['Number of school aged children provided child care', 'number'],
   ],
   [
     'Child Care SchoolAged Hours',
-    ['Total number of child care hours provided for school aged children', '7'],
+    [
+      'Total number of child care hours provided for school aged children',
+      'number',
+    ],
   ],
   [
     'Subsidies or Scholarships',
     [
       'Number of children provided subsidized or scholarship tuition for child care',
-      '7',
+      'number',
     ],
   ],
   [
     'Rental Assistance',
-    ['Number of individuals provided with rental assistance', '7'],
+    ['Number of individuals provided with rental assistance', 'number'],
   ],
   [
     'Utility Assistance',
-    ['Number of individuals provided with utility assistance', '7'],
+    ['Number of individuals provided with utility assistance', 'number'],
   ],
   [
     'Other Assistance',
-    ['Number of individuals provided with other assistance', '7'],
-  ],
-  [
-    'Attraction and Retention',
-    [
-      'If possible, define or describe how these funds affected attraction or retention of staff or families served',
-      '2000',
-    ],
+    ['Number of individuals provided with other assistance', 'number'],
   ],
   //ZIP CODES
   [
     'Corryton 37721',
-    ['Number of individuals served in Corryton, TN 37721', '250'],
+    ['Number of individuals served in Corryton, TN 37721', 'number'],
   ],
   [
     'Farragut 37934',
-    ['Number of individuals served in Farragut, TN 37934', '250'],
+    ['Number of individuals served in Farragut, TN 37934', 'number'],
   ],
   [
     'Heiskell 37754',
-    ['Number of individuals served in Heiskell, TN 37754', '250'],
+    ['Number of individuals served in Heiskell, TN 37754', 'number'],
   ],
   [
     'Knoxville 37938',
-    ['Number of individuals served in Knoxville, TN 37902', '250'],
+    ['Number of individuals served in Knoxville, TN 37902', 'number'],
   ],
   [
     'Knoxville 37902',
-    ['Number of individuals served in Knoxville, TN 37902', '250'],
+    ['Number of individuals served in Knoxville, TN 37902', 'number'],
   ],
   [
     'Knoxville 37909',
-    ['Number of individuals served in Knoxville, TN 37909', '250'],
+    ['Number of individuals served in Knoxville, TN 37909', 'number'],
   ],
   [
     'Knoxville 37912',
-    ['Number of individuals served in Knoxville, TN 37912', '250'],
+    ['Number of individuals served in Knoxville, TN 37912', 'number'],
   ],
   [
     'Knoxville 37914',
-    ['Number of individuals served in Knoxville, TN 37914', '250'],
+    ['Number of individuals served in Knoxville, TN 37914', 'number'],
   ],
   [
     'Knoxville 37915',
-    ['Number of individuals served in Knoxville, TN 37915', '250'],
+    ['Number of individuals served in Knoxville, TN 37915', 'number'],
   ],
   [
     'Knoxville 37916',
-    ['Number of individuals served in Knoxville, TN 37916', '250'],
+    ['Number of individuals served in Knoxville, TN 37916', 'number'],
   ],
   [
     'Knoxville 37917',
-    ['Number of individuals served in Knoxville, TN 37917', '250'],
+    ['Number of individuals served in Knoxville, TN 37917', 'number'],
   ],
   [
     'Knoxville 37918',
-    ['Number of individuals served in Knoxville, TN 37918', '250'],
+    ['Number of individuals served in Knoxville, TN 37918', 'number'],
   ],
   [
     'Knoxville 37919',
-    ['Number of individuals served in Knoxville, TN 37919', '250'],
+    ['Number of individuals served in Knoxville, TN 37919', 'number'],
   ],
   [
     'Knoxville 37920',
-    ['Number of individuals served in Knoxville, TN 37920', '250'],
+    ['Number of individuals served in Knoxville, TN 37920', 'number'],
   ],
   [
     'Knoxville 37921',
-    ['Number of individuals served in Knoxville, TN 37921', '250'],
+    ['Number of individuals served in Knoxville, TN 37921', 'number'],
   ],
   [
     'Knoxville 37922',
-    ['Number of individuals served in Knoxville, TN 37922', '250'],
+    ['Number of individuals served in Knoxville, TN 37922', 'number'],
   ],
   [
     'Knoxville 37923',
-    ['Number of individuals served in Knoxville, TN 37923', '250'],
+    ['Number of individuals served in Knoxville, TN 37923', 'number'],
   ],
   [
     'Knoxville 37924',
-    ['Number of individuals served in Knoxville, TN 37924', '250'],
+    ['Number of individuals served in Knoxville, TN 37924', 'number'],
   ],
   [
     'Knoxville 37931',
-    ['Number of individuals served in Knoxville, TN 37931', '250'],
+    ['Number of individuals served in Knoxville, TN 37931', 'number'],
   ],
   [
     'Knoxville 37932',
-    ['Number of individuals served in Knoxville, TN 37932', '250'],
+    ['Number of individuals served in Knoxville, TN 37932', 'number'],
   ],
-  ['Mascot 37806', ['Number of individuals served in Mascot, TN 37806', '250']],
-  ['Powell 37849', ['Number of individuals served in Powell, TN 37849', '250']],
+  [
+    'Mascot 37806',
+    ['Number of individuals served in Mascot, TN 37806', 'number'],
+  ],
+  [
+    'Powell 37849',
+    ['Number of individuals served in Powell, TN 37849', 'number'],
+  ],
   [
     'People Served  Full Grant Reporting Period',
     [
       'Total number of individuals served in the full grant reporting period across all zip codes',
-      '7',
+      'number',
     ],
   ],
   [
     'Number of People Served No Previous Access',
     [
       'Total number of individuals served who had no previous access to services',
-      '7',
+      'number',
     ],
   ],
   //GENDER
-  ['Female', ['Number of Female program clients', '6']],
-  ['Male', ['Number of Male program clients', '6']],
-  ['Other Sex', ['Number of program clients of other sex', '6']],
-  ['Unknown Sex', ['Number of program clients of unknown sex', '6']],
+  ['Female', ['Number of Female program clients', 'number']],
+  ['Male', ['Number of Male program clients', 'number']],
+  ['Other Sex', ['Number of program clients of other sex', 'number']],
+  ['Unknown Sex', ['Number of program clients of unknown sex', 'number']],
   //RACE
-  ['White', ['Number of White program clients', '10']],
+  ['White', ['Number of White program clients', 'number']],
   [
     'Black or African American',
-    ['Number of Black or African American program clients', '10'],
+    ['Number of Black or African American program clients', 'number'],
   ],
-  ['Asian American', ['Number of Asian American program clients', '10']],
+  ['Asian American', ['Number of Asian American program clients', 'number']],
   [
     'American Indian or Alaska Native',
-    ['Number of American Indian or Alaska Native program clients', '10'],
+    ['Number of American Indian or Alaska Native program clients', 'number'],
   ],
   [
     'Native Hawaiian and Pacific Islander',
     [
       'Number of Native Hawaiian or Other Pacific Islander program clients',
-      '10',
+      'number',
     ],
   ],
   [
     'Two or More Races',
-    ['Number of program clients of two or more races', '10'],
+    ['Number of program clients of two or more races', 'number'],
   ],
   [
     'Other Designation',
-    ['Number of program clients of other designation', '10'],
+    ['Number of program clients of other designation', 'number'],
   ],
-  ['Race Unknown', ['Number of program clients of unknown race', '10']],
+  ['Race Unknown', ['Number of program clients of unknown race', 'number']],
   // ETHNICITY
   [
     'Hispanic or Latino',
-    ['Number of Hispanic or Latino program clients', '10'],
+    ['Number of Hispanic or Latino program clients', 'number'],
   ],
   [
     'Not Hispanic or Latino',
-    ['Number of program clients not Hispanic or Latino', '10'],
+    ['Number of program clients not Hispanic or Latino', 'number'],
   ],
   [
     'Unknown Ethnicity',
-    ['Number of program clients of unknown ethnicity', '10'],
+    ['Number of program clients of unknown ethnicity', 'number'],
   ],
   // INCOME DEMOGRAPHICS
   [
     'Below Poverty Level 100 and below of poverty based on size of family unit',
-    ['Number of program clients below 100% of poverty level', '10'],
+    ['Number of program clients below 100% of poverty level', 'number'],
   ],
   [
     'Low Income 101200 of poverty based on size of family unit',
-    ['Number of program clients between 101% and 200% of poverty level', '10'],
+    [
+      'Number of program clients between 101% and 200% of poverty level',
+      'number',
+    ],
   ],
   [
     'Above Low Income 201 and above based on size of family unit',
-    ['Number of program clients above 200% of poverty level', '10'],
+    ['Number of program clients above 200% of poverty level', 'number'],
   ],
-  ['Income Unknown', ['Number of program clients with unknown income', '10']],
+  [
+    'Income Unknown',
+    ['Number of program clients with unknown income', 'number'],
+  ],
   //AGE DEMOGRAPHICS
-  ['Under Five', ['Number of program clients under the age of 5', '6']],
+  ['Under Five', ['Number of program clients under the age of 5', 'number']],
   [
     'Five  Seventeen',
-    ['Number of program clients between the ages of 5 and 17', '6'],
+    ['Number of program clients between the ages of 5 and 17', 'number'],
   ],
   [
     'Eighteen  TwentyFour',
-    ['Number of program clients between the ages of 18 and 24', '6'],
+    ['Number of program clients between the ages of 18 and 24', 'number'],
   ],
   [
     'TwentyFive  FortyFour',
-    ['Number of program clients between the ages of 25 and 44', '6'],
+    ['Number of program clients between the ages of 25 and 44', 'number'],
   ],
   [
     'FortyFive  SixtyFour',
-    ['Number of program clients between the ages of 45 and 64', '6'],
+    ['Number of program clients between the ages of 45 and 64', 'number'],
   ],
   [
     'SixtyFive  Over',
-    ['Number of program clients 65 years of age and older', '6'],
+    ['Number of program clients 65 years of age and older', 'number'],
   ],
-  ['Age Unknown', ['Number of program clients with unknown age', '6']],
+  ['Age Unknown', ['Number of program clients with unknown age', 'number']],
 ]);

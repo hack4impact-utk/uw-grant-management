@@ -1,7 +1,8 @@
 import { NextResponse } from 'next/server';
 import dbConnect from '@/utils/db-connect';
+import { withAuth } from '@/utils/auth';
 
-export async function GET() {
+export const GET = withAuth(async function () {
   await dbConnect();
 
   try {
@@ -45,4 +46,4 @@ export async function GET() {
       { status: 500 }
     );
   }
-}
+});

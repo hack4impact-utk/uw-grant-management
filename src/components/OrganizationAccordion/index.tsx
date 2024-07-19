@@ -3,7 +3,6 @@ import Accordion from '@mui/material/Accordion';
 import AccordionSummary from '@mui/material/AccordionSummary';
 import AccordionDetails from '@mui/material/AccordionDetails';
 import Typography from '@mui/material/Typography';
-//import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import AddIcon from '@mui/icons-material/Add';
 import RemoveIcon from '@mui/icons-material/Remove';
 import { Report, Project, Organization } from '@/utils/types/models';
@@ -79,7 +78,7 @@ function OrganizationAccordion({
       >
         <Typography
           sx={{
-            maxWidth: '100%',
+            maxWidth: 'calc(100% - 10rem)',
             overflowY: 'auto',
           }}
         >
@@ -127,7 +126,7 @@ function ProjectAccordion({ project }: { project: Project }) {
   const [isOpen, setOpen] = useState(false);
   const clientsServedCached = useRef<boolean>(false);
 
-  const fetchCleientsServed = async () => {
+  const fetchClientsServed = async () => {
     if (isOpen) {
       setOpen(false);
       return;
@@ -159,7 +158,7 @@ function ProjectAccordion({ project }: { project: Project }) {
     >
       <AccordionSummary
         expandIcon={isOpen ? <RemoveIcon /> : <AddIcon />}
-        onClick={fetchCleientsServed}
+        onClick={fetchClientsServed}
         style={{
           borderRadius: `4px 4px ${isOpen ? '0px 0px ' : '4px 4px'}`,
           transition: 'border-radius 300ms',
@@ -167,7 +166,11 @@ function ProjectAccordion({ project }: { project: Project }) {
           backgroundColor: theme.primaryBlueRGBA(90),
         }}
       >
-        <Typography>
+        <Typography
+          sx={{
+            maxWidth: 'calc(100% - 10rem)',
+          }}
+        >
           <strong>{project.name}</strong>
         </Typography>
         <Button

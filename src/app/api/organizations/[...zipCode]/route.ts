@@ -2,6 +2,7 @@ import dbConnect from '@/utils/db-connect';
 import { NextResponse, NextRequest } from 'next/server';
 import Report from '@/server/models/Report';
 import { Organization } from '@/utils/types/models';
+import { withAuth } from '@/utils/auth';
 
 type RequestParams = {
   params: {
@@ -15,7 +16,10 @@ type OrganizationInfo = {
   projectIds: Set<string>;
 };
 
-export async function GET(req: NextRequest, { params }: RequestParams) {
+export const GET = withAuth(async function (
+  req: NextRequest,
+  { params }: RequestParams
+) {
   await dbConnect();
   try {
     const reports = await Report.find({
@@ -59,4 +63,4 @@ export async function GET(req: NextRequest, { params }: RequestParams) {
   return NextResponse.json({
     success: false,
   });
-}
+});

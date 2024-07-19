@@ -2,6 +2,7 @@ import Report from '@/server/models/Report';
 import { NextRequest, NextResponse } from 'next/server';
 import dbConnect from '@/utils/db-connect';
 import { Organization, Project } from '@/utils/types/models';
+import { withAuth } from '@/utils/auth';
 
 interface ZipCodeFilters {
   organizationId?: Record<string, Array<string>>;
@@ -15,8 +16,7 @@ interface ZipCodeInfo {
   organizationsPresent: Set<string>;
   projectsPresent: Set<string>;
 }
-
-export async function GET(request: NextRequest) {
+export const GET = withAuth(async function (request: NextRequest) {
   await dbConnect();
 
   try {
@@ -67,9 +67,9 @@ export async function GET(request: NextRequest) {
           currentInfo.organizationsPresent.add(organization.name);
           currentInfo.projectsPresent.add(project.name);
           currentInfo.totalOrganizationsPresent =
-            currentInfo.organizationsPresent.size;
+            currentInfo.organizationsPresent.size || 0;
           currentInfo.totalProjectsPresent =
-            currentInfo.organizationsPresent.size;
+            currentInfo.organizationsPresent.size || 0;
         }
 
         zipCodeClientsServedMap.set(zipCodeInfo.zipCode, currentInfo);
@@ -90,4 +90,4 @@ export async function GET(request: NextRequest) {
       { status: 500 }
     );
   }
-}
+});

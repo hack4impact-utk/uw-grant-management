@@ -1,15 +1,21 @@
 import Report from '@/server/models/Report';
 import Organization from '@/server/models/Organization';
 import Project from '@/server/models/Project';
-import { loadReportCSV, CSVReportRow } from '@/utils/parsing/csvParser';
+import { loadReportCSV } from '@/utils/parsing/csvParser';
+import { CSVReportRow, ReportSubmission } from '@/utils/types/models';
 import { locations, ExpectedCSVInfo } from '@/utils/constants';
-import { capitalize } from '@/utils/formatting';
 import { TimePeriod } from '@/utils/types/models';
 
 // Pull an integer from a numeric or empty string. Empty
 // string is defaulted to 0.
 function extractInt(value: string) {
   return parseInt(value.trim() || '0');
+}
+
+// Pull a float from a numeric or empty string. Empty
+// string is defaulted to 0.
+function extractFloat(value: string) {
+  return parseFloat(value.trim() || '0');
 }
 
 // Create organization
@@ -43,10 +49,17 @@ function parseZipCodeClientsServed(reportData: CSVReportRow) {
     });
 }
 
+export function cleanCSVReportRow(row: CSVReportRow) {
+  row['Amount Awarded'] =
+    row['Amount Awarded']?.replace('$', '').replace(',', '') || '';
+  return row;
+}
+
 async function createReport(
   reportData: CSVReportRow,
   organizationId: string,
   projectId: string,
+  reportSubmissionId: string,
   periodStart: TimePeriod,
   periodEnd: TimePeriod
 ) {
@@ -54,10 +67,7 @@ async function createReport(
   const existingReport = await Report.findOne({
     organizationId: organizationId,
     projectId: projectId,
-    'periodStart.month': periodStart.month,
-    'periodStart.year': periodStart.year,
-    'periodEnd.month': periodEnd.month,
-    'periodEnd.year': periodEnd.year,
+    reportSubmissionId: reportSubmissionId,
   });
 
   if (existingReport) {
@@ -65,13 +75,12 @@ async function createReport(
   }
 
   await Report.create({
+    reportSubmissionId: reportSubmissionId,
     organizationId: organizationId,
     projectId: projectId,
     periodStart: periodStart,
     periodEnd: periodEnd,
-    amountAwarded: parseFloat(
-      reportData['Amount Awarded'].replace('$', '').trim() || '0'
-    ).toFixed(2),
+    amountAwarded: extractFloat(reportData['Amount Awarded']),
     clientsServed: extractInt(reportData['Clients Served']),
     jobsCreated: extractInt(reportData['Jobs Created']),
     partners: extractInt(reportData['Partners']),
@@ -147,38 +156,24 @@ async function createReport(
       notHispanicLatino: extractInt(reportData['Not Hispanic or Latino']),
       unknown: extractInt(reportData['Unknown Ethnicity']),
     },
+    attractionAndRetention: reportData['Attraction and Retention'],
   });
 }
 
-export const importCSVReport = async (filePath: string) => {
-  // Parse time period information from file path
-  const fileName = filePath.split('/').pop() || '';
-  const [periodStartString, periodEndString] = fileName
-    .replace('.csv', '')
-    .split('_');
-
-  const periodStart: TimePeriod = {
-    month: capitalize(periodStartString.split('-')[0]),
-    year: periodStartString.split('-')[1],
-  };
-  const periodEnd: TimePeriod = {
-    month: capitalize(periodEndString.split('-')[0]),
-    year: periodEndString.split('-')[1],
-  };
-
-  // Load CSV data
-  const data = await loadReportCSV(filePath);
+export const createReports = async (reportSubmission: ReportSubmission) => {
+  const { data, periodStart, periodEnd } = reportSubmission;
 
   const orgNameToIdMapper = new Map<string, string>();
   // Find existing organization and create mapper
   const orgs = await Organization.find();
   orgs.forEach((org) => {
-    orgNameToIdMapper.set(org.name, org.id);
+    orgNameToIdMapper.set(org.name.trim(), org.id);
   });
-
   for (const item of data) {
     // Ignore rows that don't have crucial names
-    if (!(item['Organization Name'].trim() && item['Project Name'].trim())) {
+    item['Organization Name'] = item['Organization Name']?.trim();
+    item['Project Name'] = item['Project Name']?.trim();
+    if (!(item['Organization Name'] && item['Project Name'])) {
       continue;
     }
 
@@ -200,7 +195,14 @@ export const importCSVReport = async (filePath: string) => {
       ? existingProject.id
       : (await createProject(item['Project Name'], orgId)).id;
 
-    await createReport(item, orgId, projectId, periodStart, periodEnd);
+    await createReport(
+      item,
+      orgId,
+      projectId,
+      reportSubmission.id,
+      periodStart,
+      periodEnd
+    );
   }
 };
 
@@ -217,7 +219,6 @@ export const validateImportCSV = async (file: File) => {
       csvHeaders.splice(csvHeaders.indexOf(header), 1);
     }
   }
-  console.log(csvHeaders);
   const csvRowValues = data.filter((row) => {
     const values = Object.values(row);
     return values.some((val) => val !== '' && val !== null && val !== ' ');
@@ -227,14 +228,14 @@ export const validateImportCSV = async (file: File) => {
   // Verify all headers are present within the csv file & there are no extra headers.
   for (const header of expectedHeaders) {
     if (!csvHeaders.includes(header)) {
-      validationErrors.add(`- MISSING COLUMN HEADER: '${header}'`);
+      validationErrors.add(`- Missing column header: '${header}'`);
     }
   }
 
   // Verify there are no extra header values.
   for (const header of csvHeaders) {
     if (!expectedHeaders.includes(header) && header !== '') {
-      validationErrors.add(`- EXTRA COLUMN HEADER IS PRESENT: '${header}'`);
+      validationErrors.add(`- Extra columb header is present: '${header}'`);
     }
   }
 
@@ -243,26 +244,32 @@ export const validateImportCSV = async (file: File) => {
     for (const val of Object.values(row)) {
       // Get the column name for the value.
       const column = Object.keys(data[0])[Object.values(row).indexOf(val)];
+      const expectedCSVInfo = ExpectedCSVInfo.get(column);
+      if (!expectedCSVInfo) {
+        continue;
+      }
 
       // Check if the value is empty and if it is for a required column. Then check if the value is too long based on its defined max length.
-      if ((val === '' || val === ' ') && ExpectedCSVInfo.has(column)) {
+      if (val === '' || val === ' ') {
         validationErrors.add(
-          ` - THE VALUE FOR COLUMN  '${column}'  at ROW '${csvRowValues.indexOf(row) + 2}'  IS EMPTY`
+          ` - The value for column '${column}' at row '${csvRowValues.indexOf(row) + 2}' is empty`
         );
-      } else {
-        const expectedInfo = ExpectedCSVInfo.get(column);
-        if (expectedInfo && expectedInfo[1]) {
-          if (val.length > expectedInfo[1]) {
-            validationErrors.add(
-              `- THE VALUE FOR COLUMN  '${column}'  at ROW: '${csvRowValues.indexOf(row) + 2}' IS TOO LONG`
-            );
-          }
-        }
+      }
+
+      // If it's supposed to be a number column, verify that it is a valid number.
+      const valueType = expectedCSVInfo[1];
+
+      // @ts-expect-error Reason: isNaN can be used to check if a string is fully numeric.
+      if (valueType == 'number' && val && isNaN(val)) {
+        console.log(val);
+        validationErrors.add(
+          ` - The value for column '${column}' at row '${csvRowValues.indexOf(row) + 2}' is not a valid number.`
+        );
       }
     }
   }
 
   return validationErrors.size > 0
-    ? JSON.stringify(Array.from(validationErrors))
+    ? Array.from(validationErrors).join('\n')
     : null;
 };

@@ -13,4 +13,7 @@ if (process.env.NEXT_PUBLIC_DISABLE_AUTH === 'true') {
   middleware = () => {}; // Assign an empty function to middleware
 }
 
+export const config = {
+  matcher: ['/((?!api).*)'],
+};
 export default middleware;

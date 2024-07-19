@@ -1,8 +1,9 @@
 import AzureADProvider from 'next-auth/providers/azure-ad';
 import { NextAuthOptions } from 'next-auth';
 import NextAuth from 'next-auth/next';
+import { ADMIN_EMAILS } from '@/utils/constants/auth';
 
-const authOptions: NextAuthOptions = {
+export const authOptions: NextAuthOptions = {
   providers: [
     AzureADProvider({
       clientId: process.env.AZURE_AD_CLIENT_ID as string,
@@ -16,7 +17,10 @@ const authOptions: NextAuthOptions = {
         throw new Error('No authenticated user email');
       }
 
-      if (user?.email?.endsWith('@vols.utk.edu')) {
+      if (
+        user?.email?.endsWith('@unitedwayknox.org') ||
+        ADMIN_EMAILS.includes(user?.email?.toLowerCase())
+      ) {
         return true;
       } else {
         throw new Error('Unauthorized');

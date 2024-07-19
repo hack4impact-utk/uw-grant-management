@@ -57,8 +57,8 @@ function Navbar() {
       label: 'Organizations',
     },
     {
-      path: '/import',
-      label: 'Import',
+      path: '/reports',
+      label: 'Reports',
     },
     {
       path: '/analytics',
@@ -83,7 +83,9 @@ function Navbar() {
         zIndex: muiTheme.zIndex.appBar,
         padding: '.5rem 0',
         backgroundColor: '#fff',
+        height: '5rem',
       }}
+      elevation={1}
     >
       <Toolbar>
         <Typography
@@ -102,6 +104,7 @@ function Navbar() {
               src="/images/UWGK-Logo-Color-White-Background.png"
               width={220}
               height={60}
+              priority
             />
           ) : (
             <Image
@@ -109,6 +112,7 @@ function Navbar() {
               src="/images/UW_Social_Circle-671x671.png"
               width={60}
               height={60}
+              priority
               style={{
                 position: 'absolute',
                 left: '50%',

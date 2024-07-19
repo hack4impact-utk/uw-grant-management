@@ -16,6 +16,7 @@ import {
 } from '@mui/material';
 import CloseIcon from '@mui/icons-material/Close';
 import { ExpectedCSVInfo } from '../../utils/constants/index';
+import { capitalize } from '@/utils/formatting';
 
 export default function ImportInfoModal() {
   const [open, setOpen] = React.useState(false);
@@ -56,10 +57,10 @@ export default function ImportInfoModal() {
             >
               <Typography
                 id="modal-modal-title"
-                variant="h4"
+                variant="h5"
                 sx={{ paddingBottom: 2 }}
               >
-                CSV File Requirements
+                CSV Report File Requirements
               </Typography>
 
               <IconButton onClick={handleClose} aria-label="close">
@@ -86,21 +87,19 @@ export default function ImportInfoModal() {
                       Description
                     </TableCell>
                     <TableCell sx={{ fontWeight: 'bold', width: 200 }}>
-                      Max Character Length
+                      Value type
                     </TableCell>
                   </TableRow>
                 </TableHead>
                 <TableBody>
                   {Array.from(ExpectedCSVInfo.entries()).map(
-                    ([key, [description, maxLength]]) => (
+                    ([key, [description, valueType]]) => (
                       <TableRow key={key}>
                         <TableCell component="th" scope="row">
                           {key}
                         </TableCell>
                         <TableCell>{description}</TableCell>
-                        <TableCell align="center">
-                          {maxLength || 'none'}
-                        </TableCell>
+                        <TableCell>{capitalize(valueType || 'text')}</TableCell>
                       </TableRow>
                     )
                   )}

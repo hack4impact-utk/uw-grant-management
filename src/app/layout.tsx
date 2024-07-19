@@ -4,6 +4,8 @@ import AuthProvider from '../components/AuthProvider';
 import Box from '@mui/material/Box';
 import Navbar from '@/components/Navbar';
 import '../assets/css/layout.css';
+import { getServerSession } from 'next-auth';
+import Providers from '@/providers';
 
 const inter = Inter({ subsets: ['latin'] });
 
@@ -17,6 +19,7 @@ export default async function RootLayout({
 }: {
   children: React.ReactNode;
 }) {
+  const session = await getServerSession();
   return (
     <html lang="en">
       <head>
@@ -32,18 +35,20 @@ export default async function RootLayout({
         ></link>
       </head>
       <body className={inter.className}>
-        <AuthProvider>
-          <Navbar />
-          <Box
-            sx={{
-              margin: '0',
-              height: '100vh',
-              boxSizing: 'border-box',
-              paddingTop: '5rem',
-            }}
-          >
-            {children}
-          </Box>
+        <AuthProvider session={session}>
+          <Providers>
+            <Navbar />
+            <Box
+              sx={{
+                margin: '0',
+                height: '100vh',
+                boxSizing: 'border-box',
+                paddingTop: '5rem',
+              }}
+            >
+              {children}
+            </Box>
+          </Providers>
         </AuthProvider>
       </body>
     </html>

@@ -124,13 +124,14 @@ const FilterPanel: React.FC<FilterPanelProps> = ({
       anchor="left"
       open={open}
       onClose={onClose}
-      style={{
+      sx={{
         zIndex: 998,
       }}
     >
       <h2
         style={{
           padding: '12px',
+          marginTop: '2rem',
         }}
       >
         Filters
@@ -139,7 +140,7 @@ const FilterPanel: React.FC<FilterPanelProps> = ({
       <ContainerDiv>
         <FilterPanelAutocomplete
           name="organizations"
-          label="Select organizations"
+          label="Organizations"
           value={selectedFilters.organizations}
           handleAutocompleteChange={handleAutoCompleteChange}
           options={organizationsOptions}
@@ -164,7 +165,7 @@ const FilterPanel: React.FC<FilterPanelProps> = ({
       <ContainerDiv>
         <FilterPanelAutocomplete
           name="metrics"
-          label="Select metrics"
+          label="Metrics"
           value={selectedFilters.metrics}
           handleAutocompleteChange={handleAutoCompleteChange}
           options={metricsOptions}
